@@ -1,0 +1,29 @@
+{
+  "doc_type_accuracy": 1.0,
+  "value_recall": {
+    "EG_IBAN": {
+      "all": 0.8,
+      "clean": 1.0,
+      "augmented": 0.6666666666666666,
+      "n": 20
+    },
+    "EG_MOBILE": {
+      "all": 1.0,
+      "clean": 1.0,
+      "augmented": 1.0,
+      "n": 40
+    },
+    "EG_NATIONAL_ID": {
+      "all": 0.775,
+      "clean": 0.84,
+      "augmented": 0.7454545454545455,
+      "n": 80
+    },
+    "PASSPORT_NUMBER": {
+      "all": 0.65,
+      "clean": 0.6666666666666666,
+      "augmented": 0.6470588235294118,
+      "n": 20
+    }
+  }
+}

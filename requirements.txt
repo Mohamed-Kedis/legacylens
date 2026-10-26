@@ -1,0 +1,22 @@
+# core
+presidio-analyzer>=2.2
+presidio-anonymizer>=2.2
+spacy>=3.7
+pytesseract>=0.3.10
+pillow>=10.0
+numpy>=1.26
+opencv-python-headless>=4.9,<5   # OpenCV 5 moved Haar cascades out
+scikit-image>=0.22
+scikit-learn>=1.4
+joblib
+pypdf>=4.0
+pypdfium2>=4.0
+onnxruntime>=1.17
+# api
+fastapi>=0.110
+uvicorn[standard]
+python-multipart
+# tests
+pytest
+httpx
+# optional (Arabic NER for free-text names): pip install transformers torch

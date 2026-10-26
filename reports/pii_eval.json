@@ -1,0 +1,66 @@
+{
+  "CREDIT_CARD": {
+    "precision": 0.961,
+    "recall": 1.0,
+    "f1": 0.98,
+    "tp": 99,
+    "fp": 4,
+    "fn": 0
+  },
+  "EG_IBAN": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 200,
+    "fp": 0,
+    "fn": 0
+  },
+  "EG_MOBILE": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 404,
+    "fp": 0,
+    "fn": 0
+  },
+  "EG_NATIONAL_ID": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 432,
+    "fp": 0,
+    "fn": 0
+  },
+  "EMAIL_ADDRESS": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 195,
+    "fp": 0,
+    "fn": 0
+  },
+  "PASSPORT_NUMBER": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 167,
+    "fp": 0,
+    "fn": 0
+  },
+  "PERSON": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "tp": 331,
+    "fp": 0,
+    "fn": 0
+  },
+  "PERSON_FREE": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": 0.0,
+    "tp": 0,
+    "fp": 0,
+    "fn": 226
+  }
+}

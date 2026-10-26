@@ -1,0 +1,7 @@
+{
+  "glyph_accuracy": 0.9989130434782608,
+  "string_exact_match": 0.9847826086956522,
+  "train_glyphs": 30884,
+  "test_strings": 460,
+  "segmentation_skipped": 334
+}
