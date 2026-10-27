@@ -6,3 +6,4 @@ models/tessdata/
 models/*.pt
 *.onnx
 !models/.gitkeep
+*.onnx.data

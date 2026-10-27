@@ -24,6 +24,7 @@ from .risk.score import risk_score
 from .vision.faces import detect_faces
 
 _analyzer: Optional[PIIAnalyzer] = None
+FILENAME_ENTITIES = {"EG_NATIONAL_ID", "EG_MOBILE", "EG_IBAN", "PASSPORT_NUMBER", "CREDIT_CARD", "EMAIL_ADDRESS"}
 
 
 def analyzer() -> PIIAnalyzer:
@@ -61,7 +62,7 @@ def scan(file_bytes: bytes, filename: str, want_redacted: bool = False) -> dict:
         if key not in seen:  # same value read twice (OCR + custom field reader)
             seen.add(key)
             findings.append(f)
-    name_findings = analyzer().analyze(filename)  # PII hidden in the file name
+    name_findings = [f for f in analyzer().analyze(filename) if f.entity in FILENAME_ENTITIES]  # PII hidden in the file name
 
     faces = detect_faces(first_page) if first_page is not None else []
     meta = scan_metadata(file_bytes, filename)

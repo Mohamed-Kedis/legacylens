@@ -16,7 +16,7 @@ ENTITY_WEIGHTS = {
     "IP_ADDRESS": 5, "URL": 1,
 }
 # identity documents are high risk even if OCR missed the number itself
-DOC_TYPE_BASE = {"id_card": 45, "passport": 45, "financial": 15, "contract": 10,
+DOC_TYPE_BASE = {"id_card": 50, "passport": 50, "financial": 15, "contract": 10,
                  "photo": 0, "other": 0}
 META_WEIGHTS = {"GPS_LOCATION": 20, "FILENAME_PII": 10, "AUTHOR": 5, "DEVICE_INFO": 3, "CAPTURE_TIME": 2}
 FACE_WEIGHT = 15
