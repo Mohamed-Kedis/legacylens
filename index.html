@@ -1,0 +1,1687 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LegacyLens | الإرث الرقمي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Aref Ruqaa: خط رقعة بيدي طابع الإرث | Fraunces: للعناوين الإنجليزي | Cairo: للنصوص في اللغتين -->
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600..800&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   1) الألوان (Design Tokens)
+   الفكرة: غرفة تحميض صور. خلفية ليلية، وعدسة بتلمع، ونحاس دافي.
+   غيّر لون واحد هنا والموقع كله يتغير.
+   ============================================================ */
+:root {
+  color-scheme: dark light;
+  --bg: #08141C;
+  --panel: #0F2530;
+  --panel-2: #153242;
+  --ink: #E8EFF1;
+  --muted: #8FA8B1;
+  --line: #1D3A48;
+  --brass: #E2AE55;
+  --brass-ink: #E2AE55;
+  --on-brass: #08141C;
+  --aqua: #4DC0C8;
+  --coral: #F08A74;
+  --focus: #7BD6DD;
+  --display: "Aref Ruqaa", "Cairo", "Segoe UI", serif;   /* خط العناوين */
+  /* ألوان ثابتة للهيدر والصفحة الرئيسية في الوضعين */
+  --deep: #08141C;
+  --deep-panel: #0F2530;
+  --deep-line: #1D3A48;
+  --deep-text: #E8EFF1;
+  --deep-muted: #9FB6BE;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+:root[lang="en"] { --display: "Fraunces", Georgia, "Times New Roman", serif; }
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #EEF3F4; --panel: #FFFFFF; --panel-2: #F3F7F8; --ink: #0C2230; --muted: #4F6670; --line: #CBD8DB;
+    --brass-ink: #7A5200; --coral: #B3402F; --aqua: #1E7F8A; --focus: #1B6E8A;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #EEF3F4; --panel: #FFFFFF; --panel-2: #F3F7F8; --ink: #0C2230; --muted: #4F6670; --line: #CBD8DB;
+  --brass-ink: #7A5200; --coral: #B3402F; --aqua: #1E7F8A; --focus: #1B6E8A;
+}
+
+/* ============================================================
+   2) الأساسيات
+   ============================================================ */
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  font-size: 1.03rem; line-height: 1.8;
+}
+h1, h2, h3 { font-family: "Cairo", "Segoe UI", Tahoma, sans-serif; line-height: 1.3; margin: 0; font-weight: 800; }
+h1, h2 { font-family: var(--display); font-weight: 700; line-height: 1.5; }
+h1 { font-size: clamp(2.5rem, 6.2vw, 4.4rem); }
+h2 { font-size: clamp(2rem, 4.2vw, 2.9rem); }
+h3 { font-size: 1.25rem; font-weight: 700; }
+:root[lang="en"] h1, :root[lang="en"] h2 { letter-spacing: -.015em; line-height: 1.12; }
+p { margin: 0; }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.wrap { max-width: 1120px; margin-inline: auto; padding: 0 1.25rem; }
+
+/* ============================================================
+   3) الهيدر
+   ============================================================ */
+.top { background: var(--deep); color: var(--deep-text); }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; padding-block: 1rem; }
+.brand {
+  display: flex; align-items: center; gap: .6rem; background: none; border: 0; padding: 0; cursor: pointer;
+  font-family: "Fraunces", "Cairo", serif; font-size: 1.6rem; font-weight: 800; color: var(--deep-text);
+}
+.brand svg { width: 34px; height: 34px; }
+nav { display: flex; gap: .25rem; overflow-x: auto; max-width: 100%; }
+nav button {
+  background: none; border: 0; border-bottom: 3px solid transparent;
+  padding: .5rem .85rem; cursor: pointer; white-space: nowrap; color: var(--deep-muted); font-weight: 500;
+}
+nav button[aria-current="page"] { color: #fff; border-bottom-color: var(--brass); font-weight: 700; }
+nav button:hover { color: #fff; }
+.head-actions { margin-inline-start: auto; display: flex; align-items: center; gap: .6rem; }
+.top .btn.ghost { color: var(--deep-text); border-color: rgba(255,255,255,.28); }
+.top .btn.ghost:hover { border-color: #fff; }
+
+/* مبدّل اللغة */
+.lang { display: flex; border: 1.5px solid rgba(255,255,255,.28); border-radius: 999px; padding: 2px; }
+.lang button { background: none; border: 0; border-radius: 999px; padding: .1rem .8rem; cursor: pointer; font-weight: 700; color: var(--deep-muted); }
+.lang button:hover { color: #fff; }
+.lang button[aria-pressed="true"] { background: var(--brass); color: #08141C; }
+
+main { padding-block: 2.75rem 4.5rem; }
+.view-head { margin-bottom: 2rem; }
+.view-head p { color: var(--muted); max-width: 62ch; margin-top: .4rem; }
+
+/* ============================================================
+   4) الأزرار والحقول
+   ============================================================ */
+.btn {
+  background: var(--brass); color: var(--on-brass); border: 2px solid var(--brass);
+  border-radius: 999px; padding: .45rem 1.4rem; cursor: pointer; font-weight: 700;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: .4; cursor: not-allowed; filter: none; }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--line); font-weight: 600; }
+.btn.ghost:hover { border-color: var(--ink); filter: none; }
+.btn.danger { background: var(--coral); border-color: var(--coral); color: #08141C; }
+.btn.small { padding: .12rem .95rem; font-size: .92rem; }
+.btn.big { padding: .7rem 2rem; font-size: 1.12rem; }
+
+label, legend { font-weight: 600; }
+.field { display: grid; gap: .4rem; margin-bottom: 1.3rem; }
+select, input[type="date"], input[type="text"], input[type="email"], input[type="password"], input[type="file"] {
+  background: var(--panel); border: 1.5px solid var(--line); border-radius: 12px;
+  padding: .6rem .9rem; width: 100%; max-width: 420px;
+}
+input[aria-invalid="true"] { border-color: var(--coral); }
+.err { color: var(--coral); font-size: .93rem; }
+.err:empty { display: none; }
+.hint { color: var(--muted); font-size: .93rem; }
+fieldset { border: 0; padding: 0; margin: 0 0 1.3rem; }
+.radio { display: flex; gap: .65rem; align-items: flex-start; padding: .8rem 1rem; border: 1.5px solid var(--line); border-radius: 16px; margin-top: .6rem; cursor: pointer; background: var(--panel); }
+.radio:has(input:checked) { border-color: var(--brass); box-shadow: inset 0 0 0 1px var(--brass); }
+.radio input { margin-top: .5rem; accent-color: var(--brass); }
+.radio b { display: block; }
+.radio small { color: var(--muted); display: block; line-height: 1.55; }
+.row2 { display: flex; flex-wrap: wrap; gap: 1rem; }
+.row2 .field { flex: 1 1 200px; }
+.note {
+  border-inline-start: 4px solid var(--brass); padding: .7rem 1.1rem; background: var(--panel);
+  border-start-start-radius: 14px; border-end-start-radius: 14px;
+  color: var(--muted); font-size: .96rem; margin-bottom: 1.3rem;
+}
+.warn { border-inline-start-color: var(--coral); }
+.actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+
+.plain-list { list-style: none; margin: 0; padding: 0; }
+.plain-list li { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem .75rem; padding: .65rem 0; border-bottom: 1px dashed var(--line); }
+.plain-list li:last-child { border-bottom: 0; }
+.plain-list .grow { flex: 1; min-width: 0; }
+.plain-list small { color: var(--muted); display: block; line-height: 1.55; }
+.check-ok::before { content: "✓"; color: var(--brass-ink); font-weight: 700; }
+.check-no::before { content: "○"; color: var(--muted); font-weight: 700; }
+.time { color: var(--muted); font-size: .85rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+.stack > section + section, .sections > section + section { margin-top: 2.1rem; padding-top: 1.6rem; border-top: 1px solid var(--line); }
+.stack h3, .sections h3 { margin-bottom: .8rem; }
+
+.chip { font-size: .85rem; font-weight: 600; padding: 0 .8rem; border-radius: 99px; border: 1.5px solid currentColor; white-space: nowrap; }
+.chip.ok { color: var(--brass-ink); }
+.chip.del { color: var(--coral); }
+.chip.none { color: var(--muted); }
+
+/* ============================================================
+   5) الصفحة الرئيسية: العدسة + القصة
+   ============================================================ */
+.hero { position: relative; background: var(--deep); color: var(--deep-text); padding-block: 2rem 6rem; overflow: hidden; }
+.grain {
+  position: absolute; inset: 0; pointer-events: none; opacity: .1; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.hero .wrap { position: relative; z-index: 1; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 2rem; align-items: center; }
+.hero h1 { color: #fff; font-size: clamp(2.8rem, 7vw, 5.2rem); line-height: 1.5; }
+:root[lang="en"] .hero h1 { line-height: 1.08; }
+.hero .lead { margin-block: 1.5rem 2.3rem; font-size: 1.2rem; color: var(--deep-muted); max-width: 46ch; }
+.hero .tiny { margin-top: 1.4rem; color: var(--deep-muted); font-size: .93rem; opacity: .85; }
+.hero .btn.ghost { color: #fff; border-color: rgba(255,255,255,.35); }
+.hero .btn.ghost:hover { border-color: #fff; }
+
+.iris-box { position: relative; text-align: center; }
+.iris-box::before {
+  content: ""; position: absolute; inset: 4% 4% 24%; border-radius: 50%;
+  background: radial-gradient(circle, rgba(77,192,200,.26), transparent 68%);
+}
+.iris { position: relative; width: min(640px, 100%); height: auto; display: block; margin-inline: auto; }
+.iris .blade { stroke: #08141C; stroke-width: 2.5; }
+.iris .b1 { fill: #17505C; }
+.iris .b2 { fill: #1D6573; }
+.i-blades, .i-pupil, .i-ring { transform-box: view-box; transform-origin: 280px 280px; }
+.i-blades, .i-ring { transition: transform .9s cubic-bezier(.3,.8,.2,1); }
+.i-pupil { transition: transform .75s cubic-bezier(.3,.8,.2,1), fill .5s; }
+.iris.no-anim .i-blades, .iris.no-anim .i-ring, .iris.no-anim .i-pupil { transition: none; }
+.iris-file { font-family: "Cairo", sans-serif; font-weight: 700; font-size: 1.2rem; margin-top: .3rem; color: #fff; }
+.demo-choices { display: flex; flex-wrap: wrap; gap: .55rem; justify-content: center; margin-top: .9rem; }
+.demo-choices button { background: transparent; color: var(--deep-text); border: 1.5px solid rgba(255,255,255,.3); border-radius: 99px; padding: .2rem 1.05rem; cursor: pointer; font-weight: 500; }
+.demo-choices button:hover { border-color: #fff; }
+.demo-choices button[aria-pressed="true"] { background: var(--brass); border-color: var(--brass); color: #08141C; font-weight: 700; }
+.demo-out { margin: 1rem auto 0; min-height: 5em; font-size: 1rem; max-width: 38ch; color: var(--deep-muted); }
+
+.story { background: var(--deep); color: var(--deep-text); padding-block: 5rem 4rem; border-top: 1px solid var(--deep-line); }
+.story-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 3rem; align-items: start; }
+.story h2 { color: #fff; margin-bottom: 1rem; }
+.story-iris { position: sticky; top: 5rem; align-self: start; }
+.story-iris .iris { width: min(520px, 100%); }
+.beats { list-style: none; margin: 0; padding: 0; counter-reset: b; }
+.beat { counter-increment: b; min-height: 60vh; display: flex; flex-direction: column; justify-content: center; opacity: .32; transition: opacity .45s; }
+.beat.on { opacity: 1; }
+.beat::before { content: counter(b, arabic-indic); font-family: var(--display); font-weight: 700; font-size: 5rem; line-height: 1.2; color: var(--brass); }
+:root[lang="en"] .beat::before { content: counter(b, decimal); }
+.beat h3 { color: #fff; font-family: var(--display); font-size: 2.1rem; margin: .2rem 0 .5rem; font-weight: 700; line-height: 1.5; }
+:root[lang="en"] .beat h3 { line-height: 1.15; }
+.beat p { color: var(--deep-muted); font-size: 1.1rem; max-width: 36ch; }
+
+.feats { padding-block: 5rem 0; }
+.feats h2 { margin-bottom: 2.2rem; }
+.feat-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; margin: 0; }
+.feat-list div { display: grid; grid-template-columns: 2.6rem 1fr; gap: 0 1rem; padding: 1.4rem 0; border-top: 1px solid var(--line); }
+.feat-list svg { width: 30px; height: 30px; grid-row: span 2; margin-top: .25rem; fill: none; stroke: var(--aqua); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.feat-list dt { font-weight: 800; font-size: 1.2rem; font-family: "Cairo", sans-serif; }
+.feat-list dd { margin: 0; color: var(--muted); }
+
+.closing { margin-top: 5.5rem; background: var(--deep); color: var(--deep-text); padding-block: 4.5rem; text-align: center; }
+.closing h2 { color: #fff; font-size: clamp(2rem, 4.5vw, 3.2rem); }
+.closing p { margin: .6rem 0 2rem; color: var(--deep-muted); }
+
+@media (max-width: 860px) {
+  .story-grid { grid-template-columns: minmax(0, 1fr); }
+  .story-iris { display: none; }
+  .beat { min-height: auto; opacity: 1; padding-block: 1.4rem; }
+  .beat::before { font-size: 3rem; }
+}
+
+/* ============================================================
+   6) تسجيل الدخول والتسجيل
+   ============================================================ */
+.auth-box { max-width: 460px; margin-inline: auto; }
+.seg-tabs { display: flex; border: 1.5px solid var(--line); border-radius: 999px; margin-bottom: 1.8rem; background: var(--panel); padding: 4px; gap: 4px; }
+.seg-tabs button { flex: 1; background: none; border: 0; padding: .4rem; cursor: pointer; font-weight: 600; color: var(--muted); border-radius: 999px; }
+.seg-tabs button[aria-selected="true"] { background: var(--brass); color: var(--on-brass); }
+.auth-box .field input { max-width: none; }
+
+/* ============================================================
+   7) لوحة التحكم
+   ============================================================ */
+.dash-grid { display: grid; grid-template-columns: minmax(0, 350px) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+.lens-panel { background: var(--deep-panel); color: var(--deep-text); border: 1px solid var(--deep-line); border-radius: 28px; padding: 2rem 1.25rem 1.7rem; text-align: center; }
+.lens-wrap { position: relative; width: 220px; max-width: 100%; margin-inline: auto; }
+.lens-wrap svg { width: 100%; height: auto; display: block; transform: rotate(-90deg); }
+.lens-wrap circle { fill: none; stroke-width: 14; }
+.seg { transition: stroke-dasharray 1.1s cubic-bezier(.2,.7,.2,1), stroke .4s; }
+.lens-center { position: absolute; inset: 0; display: grid; place-content: center; }
+.lens-center b { font-weight: 800; font-size: 2.8rem; line-height: 1.1; color: #fff; }
+.lens-center span { font-size: .85rem; opacity: .85; max-width: 9em; margin-inline: auto; line-height: 1.4; }
+.legend { list-style: none; margin: 1.3rem 0 0; padding: 0; display: grid; gap: .35rem; text-align: start; font-size: .93rem; }
+.legend li { display: flex; align-items: center; gap: .6rem; }
+.dot { width: 12px; height: 12px; border-radius: 50%; flex: none; }
+.legend .n { margin-inline-start: auto; font-weight: 700; }
+.big-num { font-weight: 800; font-size: 2rem; color: var(--ink); line-height: 1.3; }
+.cat-line { display: flex; flex-wrap: wrap; gap: .4rem 1.3rem; color: var(--muted); }
+
+/* ============================================================
+   8) الملفات: القايمة جوه شريط فيلم
+   ============================================================ */
+.upload { display: flex; flex-wrap: wrap; gap: 0 1rem; align-items: end; padding-bottom: .5rem; margin-bottom: .75rem; }
+.upload .field { flex: 1 1 220px; }
+.upload .btn { margin-bottom: 1.3rem; }
+.film { position: relative; background: var(--panel); border-radius: 20px; padding: .5rem 3rem; }
+.film::before, .film::after {
+  content: ""; position: absolute; top: 16px; bottom: 16px; width: 12px; border-radius: 3px;
+  background: repeating-linear-gradient(180deg, var(--bg) 0 14px, transparent 14px 28px);
+}
+.film::before { inset-inline-start: 16px; }
+.film::after { inset-inline-end: 16px; }
+.file-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding: 1.1rem 0; border-bottom: 1px solid var(--line); }
+.file-row:last-child { border-bottom: 0; }
+.file-row .name { flex: 1 1 220px; }
+.file-row .name small { color: var(--muted); display: block; line-height: 1.55; }
+.row-actions { display: flex; flex-wrap: wrap; gap: .4rem; }
+.edit-row { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: .75rem; align-items: end; background: var(--panel-2); border-radius: 16px; padding: .9rem; }
+.edit-row .field { margin: 0; flex: 1 1 180px; }
+.confirm-row { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; color: var(--coral); font-weight: 500; }
+
+/* ============================================================
+   9) محلل المستندات
+   ============================================================ */
+.meter { height: 14px; border-radius: 99px; background: var(--line); overflow: hidden; max-width: 460px; margin-block: .5rem; }
+.meter i { display: block; height: 100%; background: var(--brass); transition: width .6s ease; }
+.meter.high i { background: var(--coral); }
+.fields-table { width: 100%; border-collapse: collapse; margin-block: .75rem 1.3rem; }
+.fields-table th, .fields-table td { text-align: start; padding: .6rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.fields-table th { color: var(--muted); font-weight: 500; font-size: .9rem; }
+.fields-table input { accent-color: var(--brass); }
+.mono { font-family: ui-monospace, Menlo, Consolas, monospace; direction: ltr; unicode-bidi: plaintext; text-align: start; }
+.scroll-x { overflow-x: auto; max-width: 100%; }
+.report { background: var(--panel); border-radius: 22px; padding: 1.4rem 1.5rem .7rem; margin-top: 1.5rem; }
+.report h3 { margin-bottom: .5rem; }
+.report h3:not(:first-child) { margin-top: 1.1rem; }
+
+/* ============================================================
+   10) رسالة التأكيد (Toast)
+   ============================================================ */
+#toast {
+  position: fixed; inset-inline: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  max-width: 420px; margin-inline: auto; background: var(--brass); color: var(--on-brass); font-weight: 700;
+  padding: .7rem 1.2rem; border-radius: 16px; opacity: 0; transform: translateY(10px);
+  pointer-events: none; transition: opacity .25s, transform .25s; text-align: center;
+}
+#toast.show { opacity: 1; transform: none; }
+
+@media (max-width: 860px) {
+  .dash-grid, .hero-grid, .feat-list { grid-template-columns: minmax(0, 1fr); }
+  .hero-grid { gap: 1.5rem; }
+  .film { padding-inline: 2.6rem; }
+  .hero { padding-bottom: 3.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seg, .meter i, #toast, .i-blades, .i-pupil, .i-ring, .beat { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <button class="brand" data-go="landing" data-i18n-aria="brand.aria">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="16" cy="16" r="5" fill="#E2AE55"/></svg>
+      LegacyLens
+    </button>
+    <!-- التبويبات دي مبتظهرش غير بعد تسجيل الدخول -->
+    <nav id="appNav" data-i18n-aria="nav.aria" hidden>
+      <button data-go="dash" data-i18n="nav.dash"></button>
+      <button data-go="files" data-i18n="nav.files"></button>
+      <button data-go="policy" data-i18n="nav.policy"></button>
+      <button data-go="analyze" data-i18n="nav.analyze"></button>
+      <button data-go="settings" data-i18n="nav.settings"></button>
+    </nav>
+    <div class="head-actions">
+      <!-- مبدّل اللغة: عربي / English -->
+      <div class="lang" role="group" data-i18n-aria="lang.aria">
+        <button data-lang="ar" aria-pressed="true">عربي</button>
+        <button data-lang="en" aria-pressed="false">EN</button>
+      </div>
+      <button class="btn ghost small" id="hdrLogin" data-go="auth" data-mode="login" data-i18n="hdr.login"></button>
+      <button class="btn ghost small" id="hdrLogout" data-i18n="hdr.logout" hidden></button>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== 1) الصفحة الرئيسية ===================== -->
+<div data-view="landing">
+  <section class="hero">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <h1 data-i18n="hero.h1"></h1>
+        <p class="lead" data-i18n="hero.lead"></p>
+        <div class="actions">
+          <button class="btn big" data-go="auth" data-mode="register" data-i18n="cta.start"></button>
+          <button class="btn ghost big" data-go="auth" data-mode="login" data-i18n="cta.login"></button>
+        </div>
+        <p class="tiny" data-i18n="hero.tiny"></p>
+      </div>
+
+      <div class="iris-box">
+        <svg id="iris" class="iris" viewBox="0 0 560 560" role="img" data-i18n-aria="iris.aria"></svg>
+        <p class="iris-file" data-i18n="iris.file"></p>
+        <div class="demo-choices" role="group" data-i18n-aria="demo.group">
+          <button data-d="transfer" aria-pressed="true" data-i18n="demo.transfer"></button>
+          <button data-d="restricted" aria-pressed="false" data-i18n="demo.restricted"></button>
+          <button data-d="delete" aria-pressed="false" data-i18n="demo.delete"></button>
+        </div>
+        <p class="demo-out" id="demoOut" role="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="story">
+    <div class="wrap story-grid">
+      <div class="story-steps">
+        <h2 data-i18n="story.h2"></h2>
+        <ol class="beats">
+          <li class="beat" data-beat="0"><h3 data-i18n="b1.h"></h3><p data-i18n="b1.p"></p></li>
+          <li class="beat" data-beat="1"><h3 data-i18n="b2.h"></h3><p data-i18n="b2.p"></p></li>
+          <li class="beat" data-beat="2"><h3 data-i18n="b3.h"></h3><p data-i18n="b3.p"></p></li>
+          <li class="beat" data-beat="3"><h3 data-i18n="b4.h"></h3><p data-i18n="b4.p"></p></li>
+        </ol>
+      </div>
+      <div class="story-iris">
+        <svg id="iris2" class="iris" viewBox="0 0 560 560" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="feats wrap">
+    <h2 data-i18n="feats.h2"></h2>
+    <dl class="feat-list">
+      <div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M9 14l2 2 4-4"/></svg>
+        <dt data-i18n="f1.h"></dt><dd data-i18n="f1.d"></dd>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>
+        <dt data-i18n="f2.h"></dt><dd data-i18n="f2.d"></dd>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <dt data-i18n="f3.h"></dt><dd data-i18n="f3.d"></dd>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+        <dt data-i18n="f4.h"></dt><dd data-i18n="f4.d"></dd>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="2.5"/></svg>
+        <dt data-i18n="f5.h"></dt><dd data-i18n="f5.d"></dd>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h9"/></svg>
+        <dt data-i18n="f6.h"></dt><dd data-i18n="f6.d"></dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="closing">
+    <div class="wrap">
+      <h2 data-i18n="closing.h2"></h2>
+      <p data-i18n="closing.p"></p>
+      <button class="btn big" data-go="auth" data-mode="register" data-i18n="cta.start"></button>
+    </div>
+  </section>
+</div>
+
+<main class="wrap" id="appMain">
+
+  <!-- ===================== 2) تسجيل الدخول وإنشاء حساب ===================== -->
+  <section data-view="auth" hidden>
+    <div class="auth-box">
+      <div class="view-head"><h2 id="authTitle"></h2></div>
+      <div class="seg-tabs" role="tablist" data-i18n-aria="auth.tabs.aria">
+        <button role="tab" id="tabLogin" data-mode="login" aria-selected="true" data-i18n="auth.login"></button>
+        <button role="tab" id="tabRegister" data-mode="register" aria-selected="false" data-i18n="auth.tab.new"></button>
+      </div>
+
+      <form id="authForm" novalidate>
+        <div class="field" id="nameField" hidden>
+          <label for="aName" data-i18n="auth.name"></label>
+          <input type="text" id="aName" autocomplete="name">
+          <p class="err" id="eName" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="aEmail" data-i18n="auth.email"></label>
+          <input type="email" id="aEmail" autocomplete="email" dir="ltr">
+          <p class="err" id="eEmail" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="aPass" data-i18n="auth.pass"></label>
+          <input type="password" id="aPass" autocomplete="current-password" dir="ltr">
+          <p class="hint" id="passHint" data-i18n="auth.passhint" hidden></p>
+          <p class="err" id="ePass" aria-live="polite"></p>
+        </div>
+        <div class="field" id="confirmField" hidden>
+          <label for="aConfirm" data-i18n="auth.confirm"></label>
+          <input type="password" id="aConfirm" autocomplete="new-password" dir="ltr">
+          <p class="err" id="eConfirm" aria-live="polite"></p>
+        </div>
+        <p class="err" id="eForm" aria-live="polite"></p>
+        <button type="submit" class="btn big" id="aSubmit"></button>
+        <p class="hint" style="margin-top:1rem" data-i18n="auth.demohint"></p>
+      </form>
+
+      <div id="mfaStep" hidden>
+        <p class="note" data-i18n="mfa.note"></p>
+        <div class="field">
+          <label for="aCode" data-i18n="mfa.code"></label>
+          <input type="text" id="aCode" inputmode="numeric" maxlength="6" autocomplete="one-time-code" dir="ltr">
+          <p class="err" id="eCode" aria-live="polite"></p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="mfaOk" data-i18n="mfa.ok"></button>
+          <button class="btn ghost" id="mfaBack" data-i18n="mfa.back"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 3) لوحة التحكم ===================== -->
+  <section data-view="dash" hidden>
+    <div class="view-head">
+      <h2 data-i18n="dash.h2"></h2>
+      <p data-i18n="dash.p"></p>
+    </div>
+    <div class="dash-grid">
+      <div class="lens-panel">
+        <div class="lens-wrap">
+          <svg viewBox="0 0 200 200" aria-hidden="true" id="lensSvg"></svg>
+          <div class="lens-center"><b id="lensNum">0</b><span id="lensSub"></span></div>
+        </div>
+        <ul class="legend" id="lensLegend"></ul>
+      </div>
+      <div class="stack">
+        <section>
+          <h3 data-i18n="dash.files"></h3>
+          <p class="big-num" id="fileCount"></p>
+          <p class="cat-line" id="catLine"></p>
+        </section>
+        <section>
+          <h3 data-i18n="dash.alerts"></h3>
+          <ul class="plain-list" id="alerts"></ul>
+        </section>
+        <section>
+          <h3><span data-i18n="sec.h3"></span> <span id="scoreText"></span></h3>
+          <ul class="plain-list" id="checklist"></ul>
+        </section>
+        <section>
+          <h3 data-i18n="dash.shortcuts"></h3>
+          <div class="actions">
+            <button class="btn ghost" data-go="files" data-i18n="sc.upload"></button>
+            <button class="btn ghost" data-go="policy" data-i18n="sc.newrule"></button>
+            <button class="btn ghost" data-go="analyze" data-i18n="sc.analyze"></button>
+            <button class="btn ghost" data-go="settings" data-i18n="sc.settings"></button>
+          </div>
+        </section>
+        <section>
+          <h3 data-i18n="dash.events"></h3>
+          <ul class="plain-list" id="auditList"></ul>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 4) ملفاتي ===================== -->
+  <section data-view="files" hidden>
+    <div class="view-head">
+      <h2 data-i18n="files.h2"></h2>
+      <p data-i18n="files.p"></p>
+    </div>
+    <div class="upload">
+      <div class="field">
+        <label for="upFile" data-i18n="files.choose"></label>
+        <input type="file" id="upFile">
+        <p class="err" id="eUp" aria-live="polite"></p>
+      </div>
+      <div class="field">
+        <label for="upCat" data-i18n="files.cat"></label>
+        <select id="upCat"></select>
+      </div>
+      <button class="btn" id="upBtn" data-i18n="files.upload"></button>
+    </div>
+    <p class="note" data-i18n="files.note"></p>
+    <div class="film"><div id="fileList"></div></div>
+  </section>
+
+  <!-- ===================== 5) قاعدة الإرث ===================== -->
+  <section data-view="policy" hidden>
+    <div class="view-head">
+      <h2 data-i18n="pol.h2"></h2>
+      <p data-i18n="pol.p"></p>
+    </div>
+
+    <p class="note" id="policyEmpty" data-i18n="pol.empty" hidden></p>
+
+    <div id="policyForm">
+      <div class="field">
+        <label for="pFile" data-i18n="pol.file"></label>
+        <select id="pFile"></select>
+      </div>
+
+      <fieldset>
+        <legend data-i18n="pol.action"></legend>
+        <label class="radio"><input type="radio" name="action" value="transfer"><span><b data-i18n="act.transfer"></b><small data-i18n="act.transfer.d"></small></span></label>
+        <label class="radio"><input type="radio" name="action" value="restricted"><span><b data-i18n="act.restricted"></b><small data-i18n="act.restricted.d"></small></span></label>
+        <label class="radio"><input type="radio" name="action" value="delete"><span><b data-i18n="act.delete"></b><small data-i18n="act.delete.d"></small></span></label>
+      </fieldset>
+
+      <div id="recipientBox" class="field">
+        <label for="pRecipient" data-i18n="pol.recipient"></label>
+        <select id="pRecipient"></select>
+        <p class="err" id="noContacts" data-i18n="pol.nocontacts" hidden></p>
+      </div>
+      <p class="note" id="contactNote" data-i18n="pol.contactnote"></p>
+
+      <div id="condBox" class="row2">
+        <div class="field">
+          <label for="pInact" data-i18n="pol.inact"></label>
+          <select id="pInact">
+            <option value="30" data-i18n="dur.30"></option><option value="90" data-i18n="dur.90"></option><option value="180" data-i18n="dur.180"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="pGrace" data-i18n="pol.grace"></label>
+          <select id="pGrace">
+            <option value="7" data-i18n="dur.7"></option><option value="14" data-i18n="dur.14"></option><option value="30" data-i18n="dur.30"></option>
+          </select>
+        </div>
+      </div>
+
+      <div id="deleteBox" hidden>
+        <div class="field">
+          <label for="pDate" data-i18n="pol.date"></label>
+          <input type="date" id="pDate">
+        </div>
+        <p class="note warn" id="deleteNote"></p>
+        <label class="radio" style="margin-bottom:1.25rem">
+          <input type="checkbox" id="pConfirm">
+          <span><b data-i18n="pol.confirm"></b><small data-i18n="pol.confirm.d"></small></span>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="pSave" data-i18n="pol.save"></button>
+        <button class="btn ghost" id="pRemove" hidden></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 6) تحليل المستندات ===================== -->
+  <section data-view="analyze" hidden>
+    <div class="view-head">
+      <h2 data-i18n="an.h2"></h2>
+      <p data-i18n="an.p"></p>
+    </div>
+    <div class="field">
+      <label for="anFile" data-i18n="an.label"></label>
+      <input type="file" id="anFile" accept="image/*">
+      <p class="hint" data-i18n="an.hint"></p>
+      <p class="err" id="anErr" aria-live="polite"></p>
+    </div>
+    <div id="analysis"></div>
+  </section>
+
+  <!-- ===================== 7) الأمان والإعدادات ===================== -->
+  <section data-view="settings" hidden>
+    <div class="view-head">
+      <h2 data-i18n="set.h2"></h2>
+      <p data-i18n="set.p"></p>
+    </div>
+    <div class="sections">
+      <section>
+        <h3 data-i18n="set.account"></h3>
+        <div class="field">
+          <label for="sName" data-i18n="auth.name"></label>
+          <input type="text" id="sName">
+          <p class="err" id="eSName" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="sEmail" data-i18n="auth.email"></label>
+          <input type="email" id="sEmail" dir="ltr" readonly>
+        </div>
+        <button class="btn" id="sSave" data-i18n="edit.save"></button>
+      </section>
+
+      <section>
+        <h3 data-i18n="set.mfa"></h3>
+        <p><span data-i18n="set.status"></span> <b id="mfaStatus"></b></p>
+        <p class="hint" style="margin-bottom:.75rem" data-i18n="set.mfahint"></p>
+        <div id="mfaBtns"></div>
+      </section>
+
+      <section>
+        <h3 data-i18n="set.contacts"></h3>
+        <ul class="plain-list" id="contactList"></ul>
+        <div class="field" style="margin-top:1rem">
+          <label for="cName" data-i18n="set.addperson"></label>
+          <input type="text" id="cName" data-i18n-ph="set.placeholder">
+          <p class="err" id="eContact" aria-live="polite"></p>
+        </div>
+        <button class="btn ghost" id="cAdd" data-i18n="set.add"></button>
+        <p class="hint" style="margin-top:.75rem" data-i18n="set.contactnote"></p>
+      </section>
+
+      <section>
+        <h3 data-i18n="set.audit"></h3>
+        <ul class="plain-list" id="fullAudit"></ul>
+      </section>
+    </div>
+  </section>
+
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ============================================================
+   أ) الترجمة (عربي / English)
+   كل نص في الموقع له اسم (مفتاح)، وقدامه [العربي, الإنجليزي].
+   عشان تضيف أو تغيّر أي كلمة: دوّر على المفتاح هنا وعدّل.
+   ============================================================ */
+const T = {
+  // عام
+  'app.title': ['LegacyLens | الإرث الرقمي', 'LegacyLens | Digital Legacy'],
+  'brand.aria': ['LegacyLens - الصفحة الرئيسية', 'LegacyLens - Home'],
+  'nav.aria': ['التنقل الرئيسي', 'Main navigation'],
+  'lang.aria': ['اللغة', 'Language'],
+  'nav.dash': ['لوحة التحكم', 'Dashboard'],
+  'nav.files': ['ملفاتي', 'My Files'],
+  'nav.policy': ['قاعدة الإرث', 'Legacy Policy'],
+  'nav.analyze': ['تحليل المستندات', 'Document Analyzer'],
+  'nav.settings': ['الأمان والإعدادات', 'Security & Settings'],
+  'hdr.login': ['تسجيل الدخول', 'Login'],
+  'hdr.logout': ['تسجيل الخروج', 'Log out'],
+  'pct': ['٪', '%'],
+
+  // الصفحة الرئيسية
+  'hero.h1': ['ذكرياتك أمانة، وإنت اللي تقرر مين يشيلها.', 'Your memories are a trust. You decide who carries them.'],
+  'hero.lead': ['ارفع صورك وعقودك ومستنداتك، وحدد لكل ملف: يروح لمين، أو يتحذف، لو بقيت مش قادر تديرها. النظام مش بينفذ حاجة غير بعد التحقق والانتظار.',
+    'Upload your photos, contracts and documents, and decide for each file who receives it, or whether it gets deleted, if you can no longer manage it. Nothing happens until the system verifies and waits.'],
+  'cta.start': ['ابدأ الآن', 'Get Started'],
+  'cta.login': ['تسجيل الدخول', 'Login'],
+  'hero.tiny': ['نسخة تجريبية لمشروع جامعي. كل البيانات هنا وهمية.', 'Demo version of a university project. All data here is fake.'],
+  'iris.aria': ['عدسة كاميرا منقوش عليها القرارات: ينتقل، محدود، مؤجل. الحلقة بتلف والريش بتتفتح وتتقفل حسب اختيارك',
+    'A camera lens engraved with the decisions: transfer, limited, scheduled. The ring turns and the blades open or close with your choice'],
+  'iris.file': ['صور رحلة الأسرة', 'Family trip photos'],
+  'demo.group': ['اختار قرار الملف', 'Choose the file decision'],
+  'demo.transfer': ['ينتقل لشخص', 'Handed to someone'],
+  'demo.restricted': ['وصول محدود', 'Limited access'],
+  'demo.delete': ['حذف مؤجل', 'Scheduled deletion'],
+  'demo.t.transfer': ['الصور تنتقل لأختك هاجر بعد التحقق وفترة الانتظار اللي حددتها.', 'The photos go to your sister Hajar after verification and the waiting period you chose.'],
+  'demo.t.restricted': ['هاجر تقدر تشوف الصور بس، من غير تنزيل. (النظام مش بيقدر يمنع تصوير الشاشة بالموبايل.)', 'Hajar can view the photos only, with no download. (The system can’t stop a phone screenshot.)'],
+  'demo.t.delete': ['الصور تتحذف في الموعد اللي تحدده، ويفضل معاك تحذيرات ومهلة للإلغاء.', 'The photos are deleted on the date you set, and you keep warnings and a grace period to cancel.'],
+  'ring.transfer': ['ينتقل', 'TRANSFER'],
+  'ring.restricted': ['محدود', 'LIMITED'],
+  'ring.delete': ['مؤجل', 'SCHEDULED'],
+  'story.h2': ['إزاي بيشتغل', 'How it works'],
+  'b1.h': ['ارفع ملفك', 'Upload your file'],
+  'b1.p': ['صورة، عقد، أو أي مستند مهم. الملف بيتحفظ مشفّر.', 'A photo, a contract, or any important document. It’s stored encrypted.'],
+  'b2.h': ['حدد قاعدته', 'Set its rule'],
+  'b2.p': ['يروح لمين؟ ولا يتحذف؟ القرار لكل ملف لوحده، ومفيش حاجة بتحصل من غير قاعدة.', 'Who gets it? Or is it deleted? You decide per file, and nothing happens without a rule.'],
+  'b3.h': ['النظام يتحقق', 'The system verifies'],
+  'b3.p': ['لو غبت فترة، بيحاول يوصلك ويستنى قبل أي خطوة. عدم النشاط لوحده مش دليل.', 'If you go quiet, it tries to reach you and waits before any step. Inactivity alone isn’t proof.'],
+  'b4.h': ['يتنفّذ قرارك', 'Your decision runs'],
+  'b4.p': ['التسليم أو الحذف بيحصل بعد التحقق وفترة السماح بس، ومعاك دايماً فرصة للإلغاء.', 'Handover or deletion happens only after verification and the grace period, and you can always cancel.'],
+  'feats.h2': ['اللي هتلاقيه جوه', 'What you’ll find inside'],
+  'f1.h': ['قاعدة لكل ملف', 'A rule for every file'],
+  'f1.d': ['الصور لأخوك، والعقود لأبوك. مفيش حساب كامل بيروح لشخص واحد.', 'Photos to your brother, contracts to your dad. No whole account goes to a single person.'],
+  'f2.h': ['تشفير قبل التخزين', 'Encrypted before storage'],
+  'f2.d': ['الملفات بتتشفّر قبل ما تتحفظ، فمحدش يقدر يقراها لو وصل للتخزين.', 'Files are encrypted before they’re saved, so nobody can read them even with storage access.'],
+  'f3.h': ['حذف مؤجل بفترة سماح', 'Scheduled deletion with a grace period'],
+  'f3.d': ['الحذف بيتم في موعد تحدده، ومعاك تحذيرات وزر إلغاء قبلها.', 'Deletion happens on a date you pick, with warnings and a cancel button before it.'],
+  'f4.h': ['تحقق قبل التسليم', 'Verification before handover'],
+  'f4.d': ['عدم نشاطك لوحده مش دليل. النظام بيتحقق وبيستنى قبل ما يسلّم أي حاجة.', 'Your inactivity alone isn’t proof. The system verifies and waits before handing over anything.'],
+  'f5.h': ['فاحص مخاطر المستندات', 'Document risk scanner'],
+  'f5.d': ['بيكتشف البيانات الحساسة في المستند ويقترح تخفيها، مع نسبة عدم يقين واضحة.', 'It finds sensitive data in a document and suggests hiding it, with a clear uncertainty margin.'],
+  'f6.h': ['سجل أمني', 'Security log'],
+  'f6.d': ['كل تغيير في القواعد أو الدخول بيتسجّل عشان تراجعه وقت ما تحب.', 'Every rule change and login is recorded so you can review it anytime.'],
+  'closing.h2': ['ابدأ بملف واحد.', 'Start with one file.'],
+  'closing.p': ['ارفعه وحدد قاعدته، وكمّل براحتك.', 'Upload it, set its rule, and carry on at your own pace.'],
+
+  // الدخول
+  'auth.login': ['تسجيل الدخول', 'Login'],
+  'auth.register': ['إنشاء حساب', 'Create account'],
+  'auth.tab.new': ['حساب جديد', 'New account'],
+  'auth.tabs.aria': ['نوع العملية', 'Type'],
+  'auth.name': ['الاسم', 'Name'],
+  'auth.email': ['البريد الإلكتروني', 'Email'],
+  'auth.pass': ['كلمة المرور', 'Password'],
+  'auth.confirm': ['تأكيد كلمة المرور', 'Confirm password'],
+  'auth.passhint': ['٨ حروف على الأقل، فيها حرف ورقم.', 'At least 8 characters, with a letter and a number.'],
+  'auth.submit.login': ['دخول', 'Sign in'],
+  'auth.submit.reg': ['إنشاء الحساب', 'Create account'],
+  'auth.demohint': ['نسخة تجريبية: أي بريد صحيح وكلمة مرور مناسبة هيدخلوك.', 'Demo: any valid email and a suitable password will let you in.'],
+  'mfa.note': ['دخلنا خطوة التحقق الثنائي (MFA). اكتب كود من ٦ أرقام. في النسخة التجريبية أي ٦ أرقام هتنفع.', 'Two-factor step (MFA). Enter a 6-digit code. In this demo any 6 digits work.'],
+  'mfa.code': ['كود التحقق', 'Verification code'],
+  'mfa.ok': ['تأكيد', 'Confirm'],
+  'mfa.back': ['رجوع', 'Back'],
+  'err.name': ['اكتب اسمك (حرفين على الأقل).', 'Enter your name (2 characters at least).'],
+  'err.email': ['اكتب بريد إلكتروني صحيح، مثلاً name@example.com', 'Enter a valid email, e.g. name@example.com'],
+  'err.pass.req': ['اكتب كلمة المرور.', 'Enter your password.'],
+  'err.pass.weak': ['كلمة المرور لازم تكون ٨ حروف على الأقل، فيها حرف ورقم.', 'Password must be at least 8 characters with a letter and a number.'],
+  'err.confirm': ['كلمتين المرور مش متطابقتين.', 'The passwords don’t match.'],
+  'err.generic': ['حصلت مشكلة، جرّب تاني.', 'Something went wrong, try again.'],
+  'err.code': ['الكود لازم يكون ٦ أرقام.', 'The code must be 6 digits.'],
+  'toast.welcome': ['أهلاً {name}', 'Welcome, {name}'],
+  'toast.loggedout': ['اتسجّل خروجك', 'You’re logged out'],
+  'log.login': ['تسجيل دخول ناجح', 'Successful login'],
+  'log.login.mfa': ['تسجيل دخول ناجح مع MFA', 'Successful login with MFA'],
+  'log.logout': ['تسجيل خروج', 'Logged out'],
+
+  // لوحة التحكم
+  'dash.h2': ['لوحة التحكم', 'Dashboard'],
+  'dash.p': ['شوف في نظرة واحدة عدد ملفاتك، وحالة قواعد الإرث، وإيه اللي محتاج انتباهك.', 'See at a glance how many files you have, your policy status, and what needs attention.'],
+  'lens.sub': ['من {n} ملفات ليها قاعدة', 'of {n} files have a rule'],
+  'legend.ok': ['لها قاعدة وراثة', 'Has a legacy rule'],
+  'legend.del': ['حذف مؤجل', 'Scheduled deletion'],
+  'legend.none': ['بدون قاعدة', 'No rule'],
+  'chip.ok': ['لها قاعدة', 'Has a rule'],
+  'dash.files': ['ملفاتك', 'Your files'],
+  'dash.filesN': ['عدد الملفات: {n}', 'Files: {n}'],
+  'dash.nofiles': ['مفيش ملفات لسه', 'No files yet'],
+  'dash.alerts': ['تنبيهات', 'Alerts'],
+  'alert.mfa': ['المصادقة الثنائية متوقفة', 'Two-factor authentication is off'],
+  'alert.mfa.sub': ['فعّلها عشان تحمي حسابك.', 'Turn it on to protect your account.'],
+  'alert.btn.settings': ['الإعدادات', 'Settings'],
+  'alert.norule.sub': ['ملف بدون قاعدة، محتاج قرارك.', 'File has no rule, needs your decision.'],
+  'alert.btn.setrule': ['حدد القاعدة', 'Set rule'],
+  'alert.del': ['حذف مجدول: {name}', 'Scheduled deletion: {name}'],
+  'alert.del.sub': ['بتاريخ {date}. تقدر تلغيه قبلها.', 'On {date}. You can cancel before then.'],
+  'alert.btn.review': ['مراجعة', 'Review'],
+  'alert.none': ['مفيش تنبيهات دلوقتي. ✓', 'No alerts right now. ✓'],
+  'sec.h3': ['حالة الأمان:', 'Security status:'],
+  'sec.of': ['{a} من {b}', '{a} of {b}'],
+  'sec.mfa': ['المصادقة الثنائية (MFA) مفعّلة', 'Two-factor authentication (MFA) is on'],
+  'sec.rules': ['كل الملفات ليها قاعدة', 'Every file has a rule'],
+  'sec.rules.hint': ['{n} ملفات بدون قاعدة', '{n} files without a rule'],
+  'sec.contacts': ['فيه جهات اتصال موثوقة', 'You have trusted contacts'],
+  'sec.review': ['مراجعة سجل الدخول خلال آخر ٣٠ يوم', 'Reviewed login history in the last 30 days'],
+  'dash.shortcuts': ['اختصارات', 'Shortcuts'],
+  'sc.upload': ['رفع ملف', 'Upload a file'],
+  'sc.newrule': ['قاعدة جديدة', 'New rule'],
+  'sc.analyze': ['تحليل مستند', 'Analyze a document'],
+  'sc.settings': ['الإعدادات', 'Settings'],
+  'dash.events': ['آخر الأحداث', 'Recent events'],
+  'events.none': ['مفيش أحداث لسه.', 'No events yet.'],
+
+  // الملفات
+  'files.h2': ['ملفاتي', 'My Files'],
+  'files.p': ['ارفع ملفاتك وصنّفها، وبعدين حدد قاعدة لكل ملف.', 'Upload your files, categorize them, then set a rule for each.'],
+  'files.choose': ['اختار ملف', 'Choose a file'],
+  'files.cat': ['التصنيف', 'Category'],
+  'files.upload': ['رفع', 'Upload'],
+  'files.note': ['في النسخة التجريبية الملف مش بيتبعت لأي مكان، النظام بيحفظ اسمه ونوعه وحجمه بس. متستخدمش مستنداتك الحقيقية.', 'In this demo the file isn’t sent anywhere; only its name, type and size are kept. Don’t use real documents.'],
+  'files.empty': ['مفيش ملفات لسه. ارفع أول ملف من فوق.', 'No files yet. Upload your first file above.'],
+  'err.nofile': ['اختار ملف الأول.', 'Choose a file first.'],
+  'err.big': ['الملف أكبر من ١٠ ميجا.', 'The file is larger than 10 MB.'],
+  'toast.uploaded': ['اترفع الملف', 'File uploaded'],
+  'log.upload': ['رفع ملف: {name}', 'Uploaded file: {name}'],
+  'row.rule': ['القاعدة', 'Rule'],
+  'row.setrule': ['حدد القاعدة', 'Set rule'],
+  'row.edit': ['تعديل', 'Edit'],
+  'row.delete': ['حذف', 'Delete'],
+  'edit.name': ['الاسم', 'Name'],
+  'edit.save': ['حفظ', 'Save'],
+  'edit.cancel': ['إلغاء', 'Cancel'],
+  'confirm.del': ['هتحذف «{name}» نهائياً{rule}. متأكد؟', 'You’re about to delete “{name}” permanently{rule}. Sure?'],
+  'confirm.rule': [' والقاعدة بتاعته كمان', ' along with its rule'],
+  'confirm.yes': ['أيوه، احذف', 'Yes, delete'],
+  'confirm.no': ['لأ', 'No'],
+  'err.emptyname': ['الاسم مينفعش يبقى فاضي', 'The name can’t be empty'],
+  'toast.saved.edit': ['اتحفظ التعديل', 'Changes saved'],
+  'log.edit': ['تعديل ملف: {name}', 'Edited file: {name}'],
+  'toast.deleted': ['اتحذف الملف', 'File deleted'],
+  'log.del': ['حذف ملف: {name}', 'Deleted file: {name}'],
+  'sum.none': ['بدون قاعدة', 'No rule'],
+  'sum.del': ['حذف مؤجل بتاريخ {date}', 'Scheduled deletion on {date}'],
+  'sum.transfer': ['نقل لـ {to}', 'Handed to {to}'],
+  'sum.restricted': ['وصول محدود لـ {to}', 'Limited access for {to}'],
+  'cat.photos': ['صور', 'Photos'],
+  'cat.contracts': ['عقود', 'Contracts'],
+  'cat.id': ['هوية', 'ID'],
+  'cat.finance': ['مالي', 'Financial'],
+  'cat.notes': ['ملاحظات', 'Notes'],
+  'cat.other': ['أخرى', 'Other'],
+  'f.1': ['صور رحلة الأسرة', 'Family trip photos'],
+  'f.2': ['عقد إيجار (تجريبي)', 'Rental contract (demo)'],
+  'f.3': ['مذكرات شخصية', 'Personal diary'],
+  'f.4': ['صورة هوية (عينة وهمية)', 'ID photo (fake sample)'],
+  'f.5': ['كشف حساب (عينة وهمية)', 'Account statement (fake sample)'],
+  'c.sister': ['أختي هاجر', 'My sister Hajar'],
+  'c.brother': ['أخي أحمد', 'My brother Ahmed'],
+  'c.father': ['أبي', 'Dad'],
+  'c.mother': ['أمي', 'Mom'],
+  'c.wife': ['زوجتي', 'My wife'],
+
+  // قاعدة الإرث
+  'pol.h2': ['قاعدة الإرث', 'Legacy Policy'],
+  'pol.p': ['حدد إيه اللي يحصل لكل ملف لو بقيت مش قادر تديره. القرار قرارك، والنظام مش بيطبّق حاجة قبل التحقق والانتظار.', 'Decide what happens to each file if you can no longer manage it. The decision is yours, and nothing is applied before verification and waiting.'],
+  'pol.empty': ['لسه معندكش ملفات. ارفع ملف الأول من صفحة «ملفاتي».', 'You have no files yet. Upload one from “My Files” first.'],
+  'pol.file': ['الملف', 'File'],
+  'pol.action': ['الإجراء', 'Action'],
+  'act.transfer': ['نقل الملف لشخص', 'Hand the file to someone'],
+  'act.transfer.d': ['الشخص ده يستلم الملف بعد اكتمال التحقق.', 'They receive the file once verification is complete.'],
+  'act.restricted': ['وصول محدود', 'Limited access'],
+  'act.restricted.d': ['الشخص يشوف الملف فقط ولا يقدر ينزّله.', 'They can view the file but can’t download it.'],
+  'act.delete': ['حذف مؤجل', 'Scheduled deletion'],
+  'act.delete.d': ['الملف يتحذف في موعد تحدده، ومعاك فترة سماح للإلغاء.', 'The file is deleted on a date you set, with a grace period to cancel.'],
+  'pol.recipient': ['المستلم (من جهات الاتصال الموثوقة)', 'Recipient (from trusted contacts)'],
+  'pol.choose': ['اختار شخص', 'Choose a person'],
+  'pol.nocontacts': ['مفيش جهات اتصال لسه. ضيف شخص من صفحة «الأمان والإعدادات».', 'No contacts yet. Add someone from “Security & Settings”.'],
+  'pol.contactnote': ['إضافة شخص كجهة اتصال موثوقة لا تمنحه أي صلاحية تلقائياً. الصلاحية بتيجي من القاعدة دي بس.', 'Adding someone as a trusted contact doesn’t grant them any access automatically. Access comes only from this rule.'],
+  'pol.inact': ['مدة عدم النشاط قبل بدء التحقق', 'Inactivity period before verification starts'],
+  'pol.grace': ['فترة السماح بعد التحقق', 'Grace period after verification'],
+  'dur.7': ['٧ أيام', '7 days'],
+  'dur.14': ['١٤ يوم', '14 days'],
+  'dur.30': ['٣٠ يوم', '30 days'],
+  'dur.90': ['٩٠ يوم', '90 days'],
+  'dur.180': ['١٨٠ يوم', '180 days'],
+  'pol.date': ['موعد الحذف', 'Deletion date'],
+  'pol.pickdate': ['(اختار الموعد)', '(pick a date)'],
+  'pol.deletenote': ['هيتم حذف «{name}» في {date}. هتوصلك تحذيرات قبلها، وتقدر تلغي خلال فترة السماح.', '“{name}” will be deleted on {date}. You’ll get warnings first and can cancel during the grace period.'],
+  'pol.confirm': ['فاهم إن الحذف على مراحل', 'I understand deletion happens in stages'],
+  'pol.confirm.d': ['حذف السجل من التطبيق، وإتلاف مفتاح التشفير، وإزالة النسخ الاحتياطية بتتم بشكل منفصل. مفيش وعد بإزالة كل نسخة فوراً.', 'Removing the record, destroying the encryption key, and clearing backups happen separately. There’s no promise that every copy disappears instantly.'],
+  'pol.save': ['حفظ القاعدة', 'Save rule'],
+  'pol.remove': ['إزالة القاعدة', 'Remove rule'],
+  'pol.cancelDel': ['إلغاء الحذف المجدول', 'Cancel scheduled deletion'],
+  'toast.pickdate': ['اختار موعد الحذف الأول', 'Pick the deletion date first'],
+  'toast.confirmfirst': ['لازم تأكد إنك فاهم مراحل الحذف', 'Confirm that you understand the deletion stages'],
+  'toast.pickrecipient': ['اختار المستلم الأول', 'Choose a recipient first'],
+  'log.rule': ['تحديث قاعدة: {name} ({summary})', 'Updated rule: {name} ({summary})'],
+  'toast.rulesaved': ['اتحفظت القاعدة', 'Rule saved'],
+  'log.cancelDel': ['إلغاء الحذف المجدول: {name}', 'Cancelled scheduled deletion: {name}'],
+  'log.removeRule': ['إزالة قاعدة: {name}', 'Removed rule: {name}'],
+  'toast.cancelDel': ['اتلغى الحذف المجدول', 'Scheduled deletion cancelled'],
+  'toast.ruleremoved': ['اتشالت القاعدة', 'Rule removed'],
+
+  // تحليل المستندات
+  'an.h2': ['تحليل المستندات', 'Document Analyzer'],
+  'an.p': ['ارفع صورة مستند، وشوف إزاي النظام هيشرح الخطر ويقترح الإخفاء. النتيجة هنا عينة ثابتة للعرض، ومفيهاش ذكاء اصطناعي حقيقي لسه.', 'Upload a document image and see how the system will explain the risk and suggest hiding data. The result here is a fixed sample; there’s no real AI yet.'],
+  'an.label': ['صورة المستند', 'Document image'],
+  'an.hint': ['الصورة مش بتتبعت لأي مكان في النسخة دي. استخدم صورة وهمية مش مستند حقيقي.', 'The image isn’t sent anywhere in this version. Use a fake image, not a real document.'],
+  'err.notimage': ['ارفع صورة (JPG أو PNG).', 'Upload an image (JPG or PNG).'],
+  'an.analyzing': ['بنحلل «{name}»...', 'Analyzing “{name}”...'],
+  'an.empty': ['ارفع صورة مستند من فوق عشان تشوف التحليل.', 'Upload a document image above to see the analysis.'],
+  'an.type.id': ['بطاقة هوية', 'ID card'],
+  'an.type': ['نوع المستند: {type}', 'Document type: {type}'],
+  'an.level': ['مستوى الخطر: {lvl} ({s}{p}) مع هامش عدم يقين ±{u}{p}', 'Risk level: {lvl} ({s}{p}) with an uncertainty margin of ±{u}{p}'],
+  'lvl.high': ['عالٍ', 'High'],
+  'lvl.mid': ['متوسط', 'Medium'],
+  'lvl.low': ['منخفض', 'Low'],
+  'an.risk.aria': ['نسبة الخطر {n} بالمية', 'Risk score {n} percent'],
+  'an.why': ['المستند فيه رقم هوية كامل وتاريخ ميلاد وعنوان. الجمع بين الحقول دي بيسهّل انتحال الشخصية.', 'The document contains a full ID number, a birth date and an address. Together they make impersonation easier.'],
+  'an.estimate': ['النسبة دي مساعد للتقدير مش حكم نهائي، والقرار النهائي ليك.', 'This score is an estimate, not a final verdict. The final decision is yours.'],
+  'an.found': ['الحقول اللي اتكشفت', 'Detected fields'],
+  'th.field': ['الحقل', 'Field'],
+  'th.value': ['القيمة', 'Value'],
+  'th.hide': ['إخفاء', 'Hide'],
+  'th.after': ['بعد الإخفاء', 'After hiding'],
+  'an.f.name': ['الاسم', 'Name'],
+  'an.f.id': ['رقم الهوية', 'ID number'],
+  'an.f.dob': ['تاريخ الميلاد', 'Date of birth'],
+  'an.f.addr': ['العنوان', 'Address'],
+  'an.v.name': ['مستخدم تجريبي', 'Test User'],
+  'an.v.addr': ['شارع تجريبي ١، مدينة تجريبية', '1 Test Street, Test City'],
+  'an.hide.aria': ['إخفاء {f}', 'Hide {f}'],
+  'rep.h3': ['التقرير', 'Report'],
+  'rep.count': ['عدد الحقول الحساسة: {n}', 'Sensitive fields: {n}'],
+  'rep.hidden': ['الحقول اللي هتتخبّى: {n}', 'Fields that will be hidden: {n}'],
+  'rec.h3': ['التوصيات', 'Recommendations'],
+  'rec.keep4': ['إخفاء «{f}» ما عدا آخر ٤ أرقام', 'Hide “{f}” except the last 4 digits'],
+  'rec.hide': ['إخفاء «{f}»', 'Hide “{f}”'],
+  'rec.orig': ['لا ترسل المستند الأصلي، ابعت النسخة المُخفاة بس.', 'Don’t send the original document; send only the hidden copy.'],
+  'an.warn': ['الإخفاء الحقيقي لازم يغيّر النسخة المُصدّرة نفسها، مش مجرد مربع أسود فوق النص. ده شغل الـ Backend، والواجهة هنا بتعرض المعاينة بس.', 'Real hiding must change the exported copy itself, not just draw a black box over the text. That’s the Backend’s job; this interface only previews it.'],
+  'an.export': ['تصدير نسخة مُخفاة (تجريبي)', 'Export hidden copy (demo)'],
+  'log.export': ['تصدير نسخة مُخفاة: {type}', 'Exported hidden copy: {type}'],
+  'toast.export': ['ده عرض تجريبي، مفيش ملف اتصدّر فعلاً', 'This is a demo; no file was actually exported'],
+  'log.analyze': ['تحليل مستند: {name}', 'Analyzed document: {name}'],
+
+  // الإعدادات
+  'set.h2': ['الأمان والإعدادات', 'Security & Settings'],
+  'set.p': ['بيانات حسابك، وحماية الدخول، والأشخاص اللي بتثق فيهم.', 'Your account details, login protection, and the people you trust.'],
+  'set.account': ['إعدادات الحساب', 'Account settings'],
+  'err.name2': ['اكتب اسم (حرفين على الأقل).', 'Enter a name (2 characters at least).'],
+  'log.profile': ['تعديل بيانات الحساب', 'Edited account details'],
+  'toast.profile': ['اتحفظت البيانات', 'Details saved'],
+  'set.mfa': ['المصادقة متعددة العوامل (MFA)', 'Multi-factor authentication (MFA)'],
+  'set.status': ['الحالة:', 'Status:'],
+  'mfa.on.t': ['مفعّلة', 'On'],
+  'mfa.off.t': ['متوقفة', 'Off'],
+  'set.mfahint': ['بتطلب كود إضافي عند الدخول، فلو حد عرف كلمة المرور مش هيقدر يدخل.', 'It asks for an extra code at login, so someone who learns your password still can’t get in.'],
+  'mfa.turnoff': ['إيقاف MFA', 'Turn off MFA'],
+  'mfa.turnon': ['تفعيل MFA', 'Turn on MFA'],
+  'mfa.confirmoff': ['إيقاف MFA بيضعّف حماية حسابك. متأكد؟', 'Turning off MFA weakens your account protection. Sure?'],
+  'mfa.yes': ['أيوه، أوقفها', 'Yes, turn it off'],
+  'log.mfa.off': ['إيقاف MFA', 'MFA turned off'],
+  'toast.mfa.off': ['اتوقفت MFA', 'MFA turned off'],
+  'log.mfa.on': ['تفعيل MFA', 'MFA turned on'],
+  'toast.mfa.on': ['اتفعّلت MFA', 'MFA turned on'],
+  'set.contacts': ['جهات الاتصال الموثوقة', 'Trusted contacts'],
+  'contacts.none': ['مفيش جهات اتصال.', 'No contacts.'],
+  'set.addperson': ['إضافة شخص', 'Add a person'],
+  'set.placeholder': ['مثال: خالي محمود', 'e.g. Uncle Mahmoud'],
+  'set.add': ['إضافة', 'Add'],
+  'err.contactname': ['اكتب اسم الشخص.', 'Enter the person’s name.'],
+  'err.dupe': ['الشخص ده موجود فعلاً.', 'This person already exists.'],
+  'log.addc': ['إضافة جهة اتصال: {name}', 'Added contact: {name}'],
+  'toast.addc': ['اتضافت جهة الاتصال', 'Contact added'],
+  'set.contactnote': ['إضافة الشخص هنا لا تعطيه أي صلاحية. الصلاحية بتتحدد من «قاعدة الإرث» لكل ملف.', 'Adding a person here gives them no access. Access is set per file in “Legacy Policy”.'],
+  'log.rmc': ['حذف جهة اتصال: {name}{extra}', 'Removed contact: {name}{extra}'],
+  'log.rmc.extra': [' (اتشالت {n} قواعد)', ' ({n} rules removed)'],
+  'toast.rmc': ['اتحذفت جهة الاتصال', 'Contact removed'],
+  'toast.rmc.rules': ['اتشالت {n} قواعد كانت ليه', '{n} rules that pointed to them were removed'],
+  'contact.remove.aria': ['حذف {name}', 'Remove {name}'],
+  'set.audit': ['سجل النشاطات الأمنية', 'Security activity log']
+};
+
+/* ============================================================
+   ب) أدوات اللغة: t() بترجّع النص باللغة الحالية
+   ============================================================ */
+const state = {
+  lang: 'ar',
+  loggedIn: false,
+  user: null,            // { name, email }
+  mfa: true,
+  mfaAsk: false,
+  afterLogin: null,      // الصفحة اللي كان رايحلها قبل ما يسجل دخول
+  // الأشخاص: key = اسم مترجم، name = اسم كتبه المستخدم
+  contacts: [
+    { id: 1, key: 'c.sister' }, { id: 2, key: 'c.brother' }, { id: 3, key: 'c.father' },
+    { id: 4, key: 'c.mother' }, { id: 5, key: 'c.wife' }
+  ],
+  nextCid: 6,
+  // الملفات: nameKey = اسم مترجم، name = اسم كتبه المستخدم. policy.to = رقم الشخص
+  files: [
+    { id: 1, nameKey: 'f.1', cat: 'photos', type: 'JPG', kb: 2400, policy: { action: 'transfer', to: 1, inact: 90, grace: 14 } },
+    { id: 2, nameKey: 'f.2', cat: 'contracts', type: 'PDF', kb: 850, policy: { action: 'transfer', to: 3, inact: 90, grace: 14 } },
+    { id: 3, nameKey: 'f.3', cat: 'notes', type: 'DOCX', kb: 120, policy: { action: 'delete', date: '2027-01-15' } },
+    { id: 4, nameKey: 'f.4', cat: 'id', type: 'PNG', kb: 640, policy: null },
+    { id: 5, nameKey: 'f.5', cat: 'finance', type: 'PDF', kb: 310, policy: null }
+  ],
+  nextId: 6,
+  audit: [],
+  current: 1,            // الملف المختار في صفحة القاعدة
+  editing: null,         // الملف اللي بيتعدل في صفحة الملفات
+  confirmDel: null       // الملف اللي مستني تأكيد الحذف
+};
+
+function t(key, p) {
+  const e = T[key];
+  if (!e) return key;
+  let s = e[state.lang === 'ar' ? 0 : 1];
+  if (p) s = s.replace(/\{(\w+)\}/g, (m, k) => (p[k] !== undefined ? p[k] : m));
+  return s;
+}
+const LOC = () => (state.lang === 'ar' ? 'ar-EG' : 'en-US');
+const num = n => Number(n).toLocaleString(LOC());
+const fmtTime = d => d.toLocaleTimeString(LOC(), { hour: '2-digit', minute: '2-digit' });
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmtSize = kb => kb >= 1024 ? num((kb / 1024).toFixed(1)) + ' MB' : num(Math.round(kb)) + ' KB';
+
+const CATS = ['photos', 'contracts', 'id', 'finance', 'notes', 'other'];
+const APP_VIEWS = ['dash', 'files', 'policy', 'analyze', 'settings'];
+
+const SAMPLES = [
+  { id: 's1', typeKey: 'an.type.id', score: 82, unc: 10,
+    fields: [
+      { nk: 'an.f.name', vk: 'an.v.name' },
+      { nk: 'an.f.id', value: '12345678901234', keep4: true },
+      { nk: 'an.f.dob', value: '01/01/1990' },
+      { nk: 'an.f.addr', vk: 'an.v.addr' }
+    ] }
+];
+const fval = f => (f.vk ? t(f.vk) : f.value);
+
+/* ============================================================
+   ج) أدوات صغيرة
+   ============================================================ */
+const $ = s => document.querySelector(s);
+function toast(msg) {
+  const el = $('#toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(toast.id); toast.id = setTimeout(() => el.classList.remove('show'), 2800);
+}
+/* سجل الأحداث: بنخزّن دالة بترجّع الجملة، عشان تتترجم لما اللغة تتغير */
+function log(fn) { state.audit.unshift({ d: new Date(), fn }); }
+const getFile = id => state.files.find(f => f.id === id);
+const fname = f => (f.nameKey ? t(f.nameKey) : f.name);
+const getContact = id => state.contacts.find(c => c.id === id);
+const cname = c => (c ? (c.key ? t(c.key) : c.name) : '');
+function summary(p) {
+  if (!p) return t('sum.none');
+  if (p.action === 'delete') return t('sum.del', { date: p.date });
+  return t('sum.' + p.action, { to: cname(getContact(p.to)) });
+}
+/* بتاخد "لقطة" من اسم الملف أو القاعدة عشان سجل الأحداث يفضل صح حتى لو اتغيّرت بعدين */
+const fileLabel = f => { const k = f.nameKey, n = f.name; return () => (k ? t(k) : n); };
+const policyLabel = p => { const q = p ? { ...p } : null; return () => summary(q); };
+
+/* ============================================================
+   د) تغيير اللغة
+   ============================================================ */
+let demoKey = 'transfer';
+let beatIdx = 0;
+
+function applyStatic() {
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', t(el.dataset.i18nAria)));
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => el.setAttribute('placeholder', t(el.dataset.i18nPh)));
+}
+function applyLang(lang, opening) {
+  state.lang = lang;
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+  document.title = t('app.title');
+  try { localStorage.setItem('ll_lang', lang); } catch (e) { /* مش مشكلة */ }
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  applyStatic();
+  // نعيد بناء العدسات بدون حركة (عشان الكلام المنقوش يتترجم)
+  [$('#iris'), $('#iris2')].forEach(svg => {
+    svg.classList.add('no-anim');
+    buildIris(svg);
+    requestAnimationFrame(() => requestAnimationFrame(() => svg.classList.remove('no-anim')));
+  });
+  setIris($('#iris'), opening ? CLOSED : DEMO[demoKey]);
+  setIris($('#iris2'), BEATS[beatIdx]);
+  $('#demoOut').textContent = t('demo.t.' + demoKey);
+  // مسح رسايل الأخطاء القديمة اللي في خانات مش بنعيد رسمها
+  ['#eUp', '#anErr', '#eSName', '#eContact'].forEach(s => { $(s).textContent = ''; });
+  authTexts();
+  renderCurrent();
+}
+function renderCurrent() {
+  if (currentView === 'dash') renderDash();
+  if (currentView === 'files') renderFiles();
+  if (currentView === 'policy') renderPolicy();
+  if (currentView === 'analyze') renderAnalyze();
+  if (currentView === 'settings') renderSettings();
+}
+document.addEventListener('click', e => {
+  const lb = e.target.closest('[data-lang]');
+  if (lb) applyLang(lb.dataset.lang);
+});
+
+/* ============================================================
+   هـ) التنقل بين الصفحات
+   ============================================================ */
+let currentView = 'landing';
+function go(view) {
+  // لو الصفحة محتاجة تسجيل دخول والمستخدم مش داخل، نوديه لصفحة الدخول
+  if (APP_VIEWS.includes(view) && !state.loggedIn) { state.afterLogin = view; view = 'auth'; setAuthMode('login'); }
+  currentView = view;
+  $('#appMain').hidden = view === 'landing';
+  document.querySelectorAll('[data-view]').forEach(s => { s.hidden = s.dataset.view !== view; });
+  document.querySelectorAll('#appNav button').forEach(b => {
+    if (b.dataset.go === view) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+  $('#appNav').hidden = !state.loggedIn;
+  $('#hdrLogout').hidden = !state.loggedIn;
+  $('#hdrLogin').hidden = state.loggedIn || view === 'auth';
+  renderCurrent();
+  window.scrollTo(0, 0);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (!b) return;
+  const v = b.dataset.go;
+  if (v === 'auth') { go('auth'); setAuthMode(b.dataset.mode || 'login'); }
+  else go(v);
+});
+
+/* ============================================================
+   و) الصفحة الرئيسية: العدسة
+   ============================================================ */
+/* دالة واحدة بتبني أي عدسة جوه أي SVG (استخدمناها مرتين: في أول الصفحة وفي القصة) */
+function buildIris(root) {
+  const C = 280;
+  let ticks = '';
+  for (let i = 0; i < 60; i++) {
+    const a = i * 6 * Math.PI / 180;
+    const big = i % 10 === 0 && i <= 20;          // ٣ علامات نحاسية = ٣ قرارات
+    const r1 = big ? 208 : 212, r2 = big ? 230 : 222;
+    ticks += `<line x1="${(C + r1 * Math.sin(a)).toFixed(1)}" y1="${(C - r1 * Math.cos(a)).toFixed(1)}"
+      x2="${(C + r2 * Math.sin(a)).toFixed(1)}" y2="${(C - r2 * Math.cos(a)).toFixed(1)}"
+      stroke="${big ? '#E2AE55' : '#5C7B88'}" stroke-width="${big ? 4 : 1.6}" stroke-linecap="round"/>`;
+  }
+  // الكلام المنقوش على إطار العدسة (بيلف مع الحلقة)
+  const labels = [['ring.transfer', 0], ['ring.restricted', 60], ['ring.delete', 120]].map(([k, a]) =>
+    `<text transform="rotate(${a} 280 280)" x="280" y="46" text-anchor="middle" font-size="17" font-weight="700"
+      fill="#E8EFF1" font-family="Cairo, Tahoma, sans-serif">${esc(t(k))}</text>`).join('');
+  // ٨ ريش، كل ريشة مدوّرة ٤٥ درجة عن اللي قبلها
+  const blades = Array.from({ length: 8 }, (_, i) =>
+    `<polygon class="blade ${i % 2 ? 'b2' : 'b1'}" points="198.9,113.7 361.1,113.7 330.5,194.7 261.5,194.7" transform="rotate(${i * 45} 280 280)"/>`).join('');
+  root.innerHTML = `
+    <polygon points="280,32 270,8 290,8" fill="#E2AE55"/>
+    <circle cx="280" cy="280" r="262" fill="#0F2530" stroke="#1D3A48" stroke-width="2"/>
+    <g class="i-ring">${ticks}${labels}</g>
+    <circle cx="280" cy="280" r="204" fill="#08141C" stroke="#E2AE55" stroke-opacity=".55" stroke-width="1.2"/>
+    <circle cx="280" cy="280" r="92" fill="#010608"/>
+    <circle class="i-pupil" cx="280" cy="280" r="88" fill="#E2AE55"/>
+    <g class="i-blades">${blades}</g>
+    <path d="M145.6 145.6 A190 190 0 0 1 247 92.9" fill="none" stroke="#fff" stroke-opacity=".16" stroke-width="3" stroke-linecap="round"/>`;
+}
+/* بتضبط وضع العدسة: حجم الفتحة، لونها، دوران الريش، ودوران الحلقة */
+function setIris(root, d) {
+  root.querySelector('.i-pupil').style.transform = 'scale(' + d.scale + ')';
+  root.querySelector('.i-pupil').setAttribute('fill', d.color);
+  root.querySelector('.i-blades').style.transform = 'rotate(' + d.spin + 'deg)';
+  root.querySelector('.i-ring').style.transform = 'rotate(' + d.ring + 'deg)';
+}
+
+const CLOSED = { color: '#F08A74', scale: .16, spin: -30, ring: -120 };
+const DEMO = {
+  transfer:   { color: '#E2AE55', scale: 1,   spin: 24,  ring: 0 },
+  restricted: { color: '#4DC0C8', scale: .58, spin: 0,   ring: -60 },
+  delete:     { color: '#F08A74', scale: .16, spin: -30, ring: -120 }
+};
+function setDemo(k) {
+  demoKey = k;
+  document.querySelectorAll('.demo-choices button').forEach(b => b.setAttribute('aria-pressed', b.dataset.d === k));
+  setIris($('#iris'), DEMO[k]);
+  $('#demoOut').textContent = t('demo.t.' + k);
+}
+document.querySelector('.demo-choices').addEventListener('click', e => {
+  const b = e.target.closest('button[data-d]'); if (b) setDemo(b.dataset.d);
+});
+
+/* العدسة التانية (على الجنب): بتتغير مع كل خطوة وأنت بتنزل في الصفحة */
+const BEATS = [
+  { color: '#E2AE55', scale: .42, spin: -12, ring: 0 },     // ارفع ملفك
+  { color: '#E2AE55', scale: .72, spin: 16,  ring: -60 },   // حدد قاعدته
+  { color: '#4DC0C8', scale: .34, spin: 44,  ring: -60 },   // النظام يتحقق
+  { color: '#E2AE55', scale: 1,   spin: 72,  ring: 0 }      // يتنفّذ قرارك
+];
+const beatEls = [...document.querySelectorAll('.beat')];
+function showBeat(i) {
+  beatIdx = i;
+  beatEls.forEach((b, j) => b.classList.toggle('on', j === i));
+  setIris($('#iris2'), BEATS[i]);
+}
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) showBeat(Number(en.target.dataset.beat)); });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  beatEls.forEach(b => io.observe(b));
+}
+
+/* ============================================================
+   ز) تسجيل الدخول وإنشاء حساب
+   ============================================================ */
+let authMode = 'login';
+let currentErrs = {};      // مفاتيح الأخطاء الحالية (عشان تتترجم لما اللغة تتغير)
+let codeErrKey = '';
+
+function authTexts() {
+  const reg = authMode === 'register';
+  $('#authTitle').textContent = t(reg ? 'auth.register' : 'auth.login');
+  $('#aSubmit').textContent = t(reg ? 'auth.submit.reg' : 'auth.submit.login');
+  showErrors(currentErrs);
+  $('#eCode').textContent = codeErrKey ? t(codeErrKey) : '';
+}
+function setAuthMode(mode) {
+  authMode = mode;
+  const reg = mode === 'register';
+  $('#tabLogin').setAttribute('aria-selected', !reg);
+  $('#tabRegister').setAttribute('aria-selected', reg);
+  $('#nameField').hidden = !reg;
+  $('#confirmField').hidden = !reg;
+  $('#passHint').hidden = !reg;
+  $('#aPass').autocomplete = reg ? 'new-password' : 'current-password';
+  $('#authForm').hidden = false;
+  $('#mfaStep').hidden = true;
+  codeErrKey = '';
+  currentErrs = {};
+  authTexts();
+}
+document.querySelector('.seg-tabs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-mode]'); if (b) setAuthMode(b.dataset.mode);
+});
+
+const FIELD_IDS = { name: ['aName', 'eName'], email: ['aEmail', 'eEmail'], password: ['aPass', 'ePass'], confirm: ['aConfirm', 'eConfirm'] };
+function showErrors(errs) {
+  currentErrs = errs;
+  Object.keys(FIELD_IDS).forEach(k => {
+    const [inp, out] = FIELD_IDS[k];
+    $('#' + out).textContent = errs[k] ? t(errs[k]) : '';
+    if (errs[k]) $('#' + inp).setAttribute('aria-invalid', 'true'); else $('#' + inp).removeAttribute('aria-invalid');
+  });
+  $('#eForm').textContent = errs.form ? t(errs.form) : '';
+}
+function validate(d, reg) {
+  const errs = {};
+  if (reg && d.name.length < 2) errs.name = 'err.name';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) errs.email = 'err.email';
+  if (!d.password) errs.password = 'err.pass.req';
+  else if (reg && (d.password.length < 8 || !/[A-Za-z]/.test(d.password) || !/\d/.test(d.password))) errs.password = 'err.pass.weak';
+  if (reg && d.confirm !== d.password) errs.confirm = 'err.confirm';
+  return errs;
+}
+
+/* دي الدالة اللي هنربطها بالـ Backend بعدين.
+   دلوقتي بترجّع نجاح وهمي. لما زميلك يجهز الـ API، هنكتب هنا:
+   const r = await fetch('/api/login', { method:'POST', body: JSON.stringify(data) }) */
+function authRequest(kind, data) {
+  return new Promise(resolve => setTimeout(() => resolve({
+    ok: true,
+    user: { name: data.name || data.email.split('@')[0], email: data.email }
+  }), 400));
+}
+
+$('#authForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const reg = authMode === 'register';
+  const data = { name: $('#aName').value.trim(), email: $('#aEmail').value.trim(), password: $('#aPass').value, confirm: $('#aConfirm').value };
+  const errs = validate(data, reg);
+  showErrors(errs);
+  const first = Object.keys(FIELD_IDS).find(k => errs[k]);
+  if (first) { $('#' + FIELD_IDS[first][0]).focus(); return; }
+  $('#aSubmit').disabled = true;
+  const res = await authRequest(reg ? 'register' : 'login', data);
+  $('#aSubmit').disabled = false;
+  if (!res.ok) { showErrors({ form: 'err.generic' }); return; }
+  state.user = res.user;
+  if (state.mfa) {
+    $('#authForm').hidden = true; $('#mfaStep').hidden = false;
+    $('#aCode').value = ''; codeErrKey = ''; $('#eCode').textContent = ''; $('#aCode').focus();
+  } else finishLogin();
+});
+$('#mfaOk').addEventListener('click', () => {
+  if (!/^\d{6}$/.test($('#aCode').value.trim())) {
+    codeErrKey = 'err.code'; $('#eCode').textContent = t(codeErrKey);
+    $('#aCode').setAttribute('aria-invalid', 'true'); return;
+  }
+  $('#aCode').removeAttribute('aria-invalid');
+  codeErrKey = ''; $('#eCode').textContent = '';
+  finishLogin();
+});
+$('#mfaBack').addEventListener('click', () => setAuthMode(authMode));
+function finishLogin() {
+  state.loggedIn = true;
+  const withMfa = state.mfa;
+  log(() => t(withMfa ? 'log.login.mfa' : 'log.login'));
+  $('#aPass').value = ''; $('#aConfirm').value = '';
+  const v = state.afterLogin || 'dash'; state.afterLogin = null;
+  toast(t('toast.welcome', { name: state.user.name }));
+  go(v);
+}
+$('#hdrLogout').addEventListener('click', () => {
+  log(() => t('log.logout'));
+  state.loggedIn = false; go('landing'); toast(t('toast.loggedout'));
+});
+
+/* ============================================================
+   ح) لوحة التحكم + العدسة
+   ============================================================ */
+let lensFirst = true;
+function renderDash() {
+  const total = state.files.length;
+  const del = state.files.filter(f => f.policy && f.policy.action === 'delete').length;
+  const ok = state.files.filter(f => f.policy && f.policy.action !== 'delete').length;
+  const none = total - ok - del;
+
+  const R = 78, C = 2 * Math.PI * R;
+  const parts = [
+    { n: ok, color: '#E2AE55', label: t('legend.ok') },
+    { n: del, color: '#F08A74', label: t('legend.del') },
+    { n: none, color: '#6E8A94', label: t('legend.none') }
+  ];
+  let offset = 0, circles = '<circle cx="100" cy="100" r="78" stroke="rgba(255,255,255,.08)"/>';
+  parts.forEach(p => {
+    const len = total ? (p.n / total) * C : 0;
+    const gap = p.n && total > 1 ? 4 : 0;
+    const shown = Math.max(len - gap, 0);
+    circles += `<circle class="seg" cx="100" cy="100" r="${R}" stroke="${p.color}"
+      stroke-dasharray="${lensFirst ? 0 : shown} ${C}" stroke-dashoffset="${-offset}" data-len="${shown}" data-c="${C}"/>`;
+    offset += len;
+  });
+  $('#lensSvg').innerHTML = circles;
+  if (lensFirst) {
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.querySelectorAll('#lensSvg .seg').forEach(c => c.setAttribute('stroke-dasharray', `${c.dataset.len} ${c.dataset.c}`));
+    }));
+    lensFirst = false;
+  }
+  $('#lensNum').textContent = num(ok + del);
+  $('#lensSub').textContent = t('lens.sub', { n: num(total) });
+  $('#lensLegend').innerHTML = parts.map(p =>
+    `<li><span class="dot" style="background:${p.color}"></span>${p.label}<span class="n">${num(p.n)}</span></li>`).join('');
+
+  // عدد الملفات وتصنيفاتها
+  $('#fileCount').textContent = t('dash.filesN', { n: num(total) });
+  const counts = CATS.map(c => [c, state.files.filter(f => f.cat === c).length]).filter(x => x[1] > 0);
+  $('#catLine').innerHTML = counts.length
+    ? counts.map(([c, n]) => `<span>${t('cat.' + c)}: <b>${num(n)}</b></span>`).join('')
+    : `<span>${t('dash.nofiles')}</span>`;
+
+  // التنبيهات
+  const need = state.files.filter(f => !f.policy);
+  const alerts = [];
+  if (!state.mfa) alerts.push({ text: t('alert.mfa'), sub: t('alert.mfa.sub'), go: 'settings', btn: t('alert.btn.settings') });
+  need.forEach(f => alerts.push({ text: fname(f), sub: t('alert.norule.sub'), go: 'policy', id: f.id, btn: t('alert.btn.setrule') }));
+  state.files.filter(f => f.policy && f.policy.action === 'delete').forEach(f =>
+    alerts.push({ text: t('alert.del', { name: fname(f) }), sub: t('alert.del.sub', { date: f.policy.date }), go: 'policy', id: f.id, btn: t('alert.btn.review') }));
+  $('#alerts').innerHTML = alerts.length ? alerts.map(a =>
+    `<li><span class="grow">${esc(a.text)}<small>${esc(a.sub)}</small></span>
+     <button class="btn small ghost" data-alert-go="${a.go}" ${a.id ? `data-alert-id="${a.id}"` : ''}>${a.btn}</button></li>`).join('')
+    : `<li><span class="grow">${t('alert.none')}</span></li>`;
+
+  // حالة الأمان
+  const items = [
+    { ok: state.mfa, text: t('sec.mfa') },
+    { ok: total > 0 && need.length === 0, text: t('sec.rules'), hint: need.length ? t('sec.rules.hint', { n: num(need.length) }) : '' },
+    { ok: state.contacts.length > 0, text: t('sec.contacts') },
+    { ok: false, text: t('sec.review') }
+  ];
+  const done = items.filter(i => i.ok).length;
+  $('#scoreText').textContent = t('sec.of', { a: num(done), b: num(items.length) });
+  $('#checklist').innerHTML = items.map(i =>
+    `<li class="${i.ok ? 'check-ok' : 'check-no'}"><span class="grow">${i.text}${i.hint ? `<small>${i.hint}</small>` : ''}</span></li>`).join('');
+
+  $('#auditList').innerHTML = auditHtml(5);
+}
+function auditHtml(n) {
+  const list = state.audit.slice(0, n);
+  return list.length
+    ? list.map(a => `<li><span class="grow">${esc(a.fn())}</span><span class="time">${fmtTime(a.d)}</span></li>`).join('')
+    : `<li><span class="grow">${t('events.none')}</span></li>`;
+}
+$('#alerts').addEventListener('click', e => {
+  const b = e.target.closest('[data-alert-go]'); if (!b) return;
+  if (b.dataset.alertId) state.current = Number(b.dataset.alertId);
+  go(b.dataset.alertGo);
+});
+
+/* ============================================================
+   ط) ملفاتي: رفع وتعديل وحذف
+   ============================================================ */
+function renderFiles() {
+  const keep = $('#upCat').value;
+  $('#upCat').innerHTML = CATS.map(c => `<option value="${c}">${t('cat.' + c)}</option>`).join('');
+  if (keep) $('#upCat').value = keep;
+  if (!state.files.length) { $('#fileList').innerHTML = `<p class="note">${t('files.empty')}</p>`; return; }
+  $('#fileList').innerHTML = state.files.map(f => {
+    const p = f.policy;
+    const chip = !p ? `<span class="chip none">${t('legend.none')}</span>`
+      : p.action === 'delete' ? `<span class="chip del">${t('legend.del')}</span>`
+      : `<span class="chip ok">${t('chip.ok')}</span>`;
+    const edit = state.editing === f.id ? `<div class="edit-row">
+        <div class="field"><label for="eN${f.id}">${t('edit.name')}</label><input type="text" id="eN${f.id}" value="${esc(fname(f))}"></div>
+        <div class="field"><label for="eC${f.id}">${t('files.cat')}</label><select id="eC${f.id}">${CATS.map(c => `<option value="${c}" ${c === f.cat ? 'selected' : ''}>${t('cat.' + c)}</option>`).join('')}</select></div>
+        <button class="btn small" data-act="save" data-id="${f.id}">${t('edit.save')}</button>
+        <button class="btn small ghost" data-act="cancel" data-id="${f.id}">${t('edit.cancel')}</button>
+      </div>` : '';
+    const confirm = state.confirmDel === f.id ? `<div class="confirm-row" role="alert">
+        ${t('confirm.del', { name: esc(fname(f)), rule: p ? t('confirm.rule') : '' })}
+        <button class="btn small danger" data-act="del-yes" data-id="${f.id}">${t('confirm.yes')}</button>
+        <button class="btn small ghost" data-act="del-no" data-id="${f.id}">${t('confirm.no')}</button>
+      </div>` : '';
+    return `<div class="file-row">
+      <div class="name"><b>${esc(fname(f))}</b><small>${t('cat.' + f.cat)} · ${esc(f.type)} · ${fmtSize(f.kb)} · ${esc(summary(p))}</small></div>
+      ${chip}
+      <div class="row-actions">
+        <button class="btn ghost small" data-act="policy" data-id="${f.id}">${p ? t('row.rule') : t('row.setrule')}</button>
+        <button class="btn ghost small" data-act="edit" data-id="${f.id}">${t('row.edit')}</button>
+        <button class="btn ghost small" data-act="del" data-id="${f.id}">${t('row.delete')}</button>
+      </div>${edit}${confirm}
+    </div>`;
+  }).join('');
+}
+$('#upBtn').addEventListener('click', () => {
+  const file = $('#upFile').files[0];
+  if (!file) { $('#eUp').textContent = t('err.nofile'); return; }
+  if (file.size > 10 * 1024 * 1024) { $('#eUp').textContent = t('err.big'); return; }
+  $('#eUp').textContent = '';
+  const ext = file.name.includes('.') ? file.name.split('.').pop().toUpperCase().slice(0, 5) : 'FILE';
+  const nf = { id: state.nextId++, name: file.name, cat: $('#upCat').value, type: ext, kb: file.size / 1024, policy: null };
+  state.files.push(nf);
+  const nm = file.name;
+  log(() => t('log.upload', { name: nm }));
+  $('#upFile').value = '';
+  toast(t('toast.uploaded'));
+  renderFiles();
+});
+$('#fileList').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return;
+  const id = Number(b.dataset.id), f = getFile(id);
+  switch (b.dataset.act) {
+    case 'policy': state.current = id; go('policy'); break;
+    case 'edit': state.editing = id; state.confirmDel = null; renderFiles(); break;
+    case 'cancel': state.editing = null; renderFiles(); break;
+    case 'save': {
+      const name = $('#eN' + id).value.trim();
+      if (!name) { toast(t('err.emptyname')); return; }
+      f.name = name; f.nameKey = null; f.cat = $('#eC' + id).value;
+      const lab = fileLabel(f);
+      log(() => t('log.edit', { name: lab() }));
+      state.editing = null; toast(t('toast.saved.edit')); renderFiles(); break;
+    }
+    case 'del': state.confirmDel = id; state.editing = null; renderFiles(); break;
+    case 'del-no': state.confirmDel = null; renderFiles(); break;
+    case 'del-yes': {
+      const lab = fileLabel(f);
+      state.files = state.files.filter(x => x.id !== id);
+      log(() => t('log.del', { name: lab() }));
+      state.confirmDel = null; toast(t('toast.deleted')); renderFiles(); break;
+    }
+  }
+});
+
+/* ============================================================
+   ي) قاعدة الإرث
+   ============================================================ */
+const radios = () => document.querySelectorAll('input[name="action"]');
+function selectedAction() { const r = [...radios()].find(x => x.checked); return r ? r.value : null; }
+
+function renderPolicy() {
+  const has = state.files.length > 0;
+  $('#policyEmpty').hidden = has; $('#policyForm').hidden = !has;
+  if (!has) return;
+  if (!getFile(state.current)) state.current = state.files[0].id;
+
+  $('#pFile').innerHTML = state.files.map(f => `<option value="${f.id}">${esc(fname(f))}</option>`).join('');
+  $('#pFile').value = state.current;
+  $('#pRecipient').innerHTML = `<option value="">${t('pol.choose')}</option>` +
+    state.contacts.map(c => `<option value="${c.id}">${esc(cname(c))}</option>`).join('');
+  $('#noContacts').hidden = state.contacts.length > 0;
+
+  const f = getFile(state.current), p = f.policy;
+  radios().forEach(r => { r.checked = !!p && r.value === p.action; });
+  $('#pRecipient').value = p && p.to ? String(p.to) : '';
+  $('#pInact').value = p && p.inact ? p.inact : 90;
+  $('#pGrace').value = p && p.grace ? p.grace : 14;
+  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  $('#pDate').min = tomorrow.toISOString().slice(0, 10);
+  $('#pDate').value = p && p.date ? p.date : '';
+  $('#pConfirm').checked = !!p && p.action === 'delete';
+  $('#pRemove').hidden = !p;
+  $('#pRemove').textContent = t(p && p.action === 'delete' ? 'pol.cancelDel' : 'pol.remove');
+  updateForm();
+}
+function updateForm() {
+  const a = selectedAction();
+  const needsPerson = a === 'transfer' || a === 'restricted';
+  $('#recipientBox').hidden = !needsPerson;
+  $('#contactNote').hidden = !needsPerson;
+  $('#condBox').hidden = !needsPerson;
+  $('#deleteBox').hidden = a !== 'delete';
+  const f = getFile(state.current);
+  if (f) $('#deleteNote').textContent = t('pol.deletenote', { name: fname(f), date: $('#pDate').value || t('pol.pickdate') });
+  $('#pSave').disabled = !a;
+}
+document.querySelector('[data-view="policy"]').addEventListener('change', e => {
+  if (e.target.id === 'pFile') { state.current = Number(e.target.value); renderPolicy(); return; }
+  updateForm();
+});
+$('#pSave').addEventListener('click', () => {
+  const a = selectedAction(), f = getFile(state.current);
+  if (a === 'delete') {
+    if (!$('#pDate').value) return toast(t('toast.pickdate'));
+    if (!$('#pConfirm').checked) return toast(t('toast.confirmfirst'));
+    f.policy = { action: 'delete', date: $('#pDate').value };
+  } else {
+    if (!$('#pRecipient').value) return toast(t('toast.pickrecipient'));
+    f.policy = { action: a, to: Number($('#pRecipient').value), inact: Number($('#pInact').value), grace: Number($('#pGrace').value) };
+  }
+  const lab = fileLabel(f), sm = policyLabel(f.policy);
+  log(() => t('log.rule', { name: lab(), summary: sm() }));
+  toast(t('toast.rulesaved'));
+  go('files');
+});
+$('#pRemove').addEventListener('click', () => {
+  const f = getFile(state.current);
+  const wasDelete = f.policy && f.policy.action === 'delete';
+  const lab = fileLabel(f);
+  f.policy = null;
+  log(() => t(wasDelete ? 'log.cancelDel' : 'log.removeRule', { name: lab() }));
+  toast(t(wasDelete ? 'toast.cancelDel' : 'toast.ruleremoved'));
+  go('files');
+});
+
+/* ============================================================
+   ك) تحليل المستندات (عرض تجريبي)
+   ============================================================ */
+let sampleId = null, analyzing = null;
+function maskValue(f) {
+  const v = fval(f);
+  if (f.keep4 && v.length > 4) return '•'.repeat(v.length - 4) + v.slice(-4);   // آخر ٤ بس
+  return '•'.repeat(Math.min(v.length, 12));
+}
+function renderAnalyze() {
+  const box = $('#analysis');
+  if (analyzing) { box.innerHTML = `<p class="note" role="status">${t('an.analyzing', { name: esc(analyzing) })}</p>`; return; }
+  const s = SAMPLES.find(x => x.id === sampleId);
+  if (!s) { box.innerHTML = `<p class="note">${t('an.empty')}</p>`; return; }
+  const lvl = t(s.score >= 70 ? 'lvl.high' : s.score >= 50 ? 'lvl.mid' : 'lvl.low');
+  const P = t('pct');
+  box.innerHTML = `
+    <h3>${t('an.type', { type: t(s.typeKey) })}</h3>
+    <p style="margin-top:.5rem"><b>${t('an.level', { lvl, s: num(s.score), u: num(s.unc), p: P })}</b></p>
+    <div class="meter ${s.score >= 70 ? 'high' : ''}" role="img" aria-label="${t('an.risk.aria', { n: s.score })}"><i style="width:${s.score}%"></i></div>
+    <p class="note">${t('an.why')} ${t('an.estimate')}</p>
+    <h3>${t('an.found')}</h3>
+    <div class="scroll-x"><table class="fields-table">
+      <thead><tr><th>${t('th.field')}</th><th>${t('th.value')}</th><th>${t('th.hide')}</th><th>${t('th.after')}</th></tr></thead>
+      <tbody>${s.fields.map((f, i) => `<tr>
+        <td>${t(f.nk)}</td><td class="mono">${esc(fval(f))}</td>
+        <td><input type="checkbox" data-i="${i}" aria-label="${esc(t('an.hide.aria', { f: t(f.nk) }))}" checked></td>
+        <td class="mono" id="m${i}">${maskValue(f)}</td></tr>`).join('')}</tbody>
+    </table></div>
+    <div class="report">
+      <h3>${t('rep.h3')}</h3>
+      <ul class="plain-list">
+        <li><span class="grow">${t('an.type', { type: t(s.typeKey) })}</span></li>
+        <li><span class="grow">${t('an.level', { lvl, s: num(s.score), u: num(s.unc), p: P })}</span></li>
+        <li><span class="grow">${t('rep.count', { n: num(s.fields.length) })}</span></li>
+        <li><span class="grow" id="hideCount">${t('rep.hidden', { n: num(s.fields.length) })}</span></li>
+      </ul>
+      <h3>${t('rec.h3')}</h3>
+      <ul class="plain-list">${s.fields.map(f =>
+        `<li><span class="grow">${t(f.keep4 ? 'rec.keep4' : 'rec.hide', { f: t(f.nk) })}</span></li>`).join('')}
+        <li><span class="grow">${t('rec.orig')}</span></li></ul>
+    </div>
+    <p class="note warn" style="margin-top:1.25rem">${t('an.warn')}</p>
+    <button class="btn" id="exportBtn">${t('an.export')}</button>`;
+}
+$('#anFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if (!f) return;
+  if (!f.type.startsWith('image/')) { $('#anErr').textContent = t('err.notimage'); e.target.value = ''; return; }
+  $('#anErr').textContent = '';
+  const name = f.name; e.target.value = '';
+  analyzing = name; renderAnalyze();
+  setTimeout(() => { analyzing = null; sampleId = 's1'; log(() => t('log.analyze', { name })); renderAnalyze(); }, 900);
+});
+$('#analysis').addEventListener('change', e => {
+  const cb = e.target.closest('input[data-i]'); if (!cb) return;
+  const s = SAMPLES.find(x => x.id === sampleId), f = s.fields[Number(cb.dataset.i)];
+  $('#m' + cb.dataset.i).textContent = cb.checked ? maskValue(f) : fval(f);
+  const n = document.querySelectorAll('#analysis input[data-i]:checked').length;
+  $('#hideCount').textContent = t('rep.hidden', { n: num(n) });
+});
+$('#analysis').addEventListener('click', e => {
+  if (!e.target.closest('#exportBtn')) return;
+  const s = SAMPLES.find(x => x.id === sampleId);
+  log(() => t('log.export', { type: t(s.typeKey) }));
+  toast(t('toast.export'));
+});
+
+/* ============================================================
+   ل) الأمان والإعدادات
+   ============================================================ */
+function renderSettings() {
+  $('#sName').value = state.user ? state.user.name : '';
+  $('#sEmail').value = state.user ? state.user.email : '';
+  renderMfa(); renderContacts();
+  $('#fullAudit').innerHTML = auditHtml(50);
+}
+$('#sSave').addEventListener('click', () => {
+  const n = $('#sName').value.trim();
+  if (n.length < 2) { $('#eSName').textContent = t('err.name2'); return; }
+  $('#eSName').textContent = '';
+  state.user.name = n; log(() => t('log.profile')); toast(t('toast.profile')); renderSettings();
+});
+
+function renderMfa() {
+  $('#mfaStatus').textContent = t(state.mfa ? 'mfa.on.t' : 'mfa.off.t');
+  $('#mfaBtns').innerHTML = state.mfaAsk
+    ? `<p class="note warn">${t('mfa.confirmoff')}</p>
+       <div class="actions"><button class="btn danger small" data-mfa="off-yes">${t('mfa.yes')}</button>
+       <button class="btn ghost small" data-mfa="cancel">${t('edit.cancel')}</button></div>`
+    : state.mfa ? `<button class="btn ghost small" data-mfa="off">${t('mfa.turnoff')}</button>`
+                : `<button class="btn small" data-mfa="on">${t('mfa.turnon')}</button>`;
+}
+$('#mfaBtns').addEventListener('click', e => {
+  const b = e.target.closest('[data-mfa]'); if (!b) return;
+  const k = b.dataset.mfa;
+  if (k === 'off') state.mfaAsk = true;
+  if (k === 'cancel') state.mfaAsk = false;
+  if (k === 'off-yes') { state.mfa = false; state.mfaAsk = false; log(() => t('log.mfa.off')); toast(t('toast.mfa.off')); }
+  if (k === 'on') { state.mfa = true; log(() => t('log.mfa.on')); toast(t('toast.mfa.on')); }
+  renderMfa(); $('#fullAudit').innerHTML = auditHtml(50);
+});
+
+function renderContacts() {
+  $('#contactList').innerHTML = state.contacts.length ? state.contacts.map(c =>
+    `<li><span class="grow">${esc(cname(c))}</span><button class="btn ghost small" data-rm="${c.id}" aria-label="${esc(t('contact.remove.aria', { name: cname(c) }))}">${t('row.delete')}</button></li>`).join('')
+    : `<li><span class="grow">${t('contacts.none')}</span></li>`;
+}
+$('#cAdd').addEventListener('click', () => {
+  const n = $('#cName').value.trim();
+  if (n.length < 2) { $('#eContact').textContent = t('err.contactname'); return; }
+  if (state.contacts.some(c => cname(c) === n)) { $('#eContact').textContent = t('err.dupe'); return; }
+  $('#eContact').textContent = '';
+  state.contacts.push({ id: state.nextCid++, name: n }); $('#cName').value = '';
+  log(() => t('log.addc', { name: n })); toast(t('toast.addc')); renderSettings();
+});
+$('#contactList').addEventListener('click', e => {
+  const b = e.target.closest('[data-rm]'); if (!b) return;
+  const id = Number(b.dataset.rm), c = getContact(id);
+  const nm = c.key ? null : c.name, key = c.key;
+  const label = () => (key ? t(key) : nm);
+  state.contacts = state.contacts.filter(x => x.id !== id);
+  // أي ملف قاعدته كانت لشخص اتحذف، القاعدة بتتشال عشان متبقاش لشخص مش موجود
+  let affected = 0;
+  state.files.forEach(f => { if (f.policy && f.policy.to === id) { f.policy = null; affected++; } });
+  log(() => t('log.rmc', { name: label(), extra: affected ? t('log.rmc.extra', { n: num(affected) }) : '' }));
+  toast(affected ? t('toast.rmc.rules', { n: num(affected) }) : t('toast.rmc'));
+  renderSettings();
+});
+
+/* ============================================================
+   م) بداية الموقع
+   ============================================================ */
+let startLang = 'ar';
+try { if (localStorage.getItem('ll_lang') === 'en') startLang = 'en'; } catch (e) { /* مش مشكلة */ }
+applyLang(startLang, true);            // العدسة تبدأ مقفولة
+showBeat(0);
+setTimeout(() => setDemo('transfer'), 450);   // وتتفتح لوحدها
+go('landing');
+</script>
+</body>
+</html>
