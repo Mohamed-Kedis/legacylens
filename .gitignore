@@ -1,7 +1,7 @@
 __pycache__/
 *.pyc
 .venv/
-data/
+/data/
 models/tessdata/
 models/*.pt
 *.onnx
